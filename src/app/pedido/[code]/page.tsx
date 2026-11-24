@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ClearCart from "@/components/ClearCart";
 import { formatPrice } from "@/lib/format";
+import { maskCityState, maskEmail, maskFullName, maskPhone } from "@/lib/privacy";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { simulatePayment } from "./actions";
 
@@ -79,7 +80,7 @@ async function OrderDetails({ params }: Props) {
           </h2>
           <p className="mt-2 text-sm text-muted">
             {order.status === "delivered"
-              ? "Esperamos que você goste! Em caso de dúvidas, responda ao e-mail de confirmação."
+              ? "Esperamos que você goste! Em caso de dúvidas, fale com a gente pelos canais de atendimento do site."
               : "Seu pedido está a caminho. Acompanhe pelo código abaixo."}
           </p>
           {order.tracking_code ? (
@@ -105,7 +106,7 @@ async function OrderDetails({ params }: Props) {
         <div className="mb-8 border border-accent bg-white p-6">
           <h2 className="font-display text-2xl font-bold uppercase">Pagamento confirmado ✓</h2>
           <p className="mt-2 text-sm text-muted">
-            Recebemos seu pedido. Você receberá as próximas atualizações por e-mail.
+            Recebemos seu pedido. Volte a esta página para acompanhar as próximas atualizações.
           </p>
         </div>
       ) : (
@@ -181,11 +182,14 @@ async function OrderDetails({ params }: Props) {
         <section className="text-sm">
           <h2 className="mb-3 font-display text-2xl font-bold uppercase">Entrega</h2>
           <div className="border border-line bg-white p-4 leading-relaxed">
-            <p className="font-semibold">{customer?.full_name}</p>
-            <p>{address.street}, {address.number} {address.complement ? `— ${address.complement}` : ""}</p>
-            <p>{address.neighborhood} — {address.city}/{address.state}</p>
-            <p>CEP {address.cep}</p>
-            <p className="mt-2 text-muted">{customer?.email} · {customer?.phone}</p>
+            <p className="font-semibold">{maskFullName(customer?.full_name)}</p>
+            <p>Entrega em {maskCityState(address)}</p>
+            <p className="mt-2 text-muted">
+              {maskEmail(customer?.email)} · {maskPhone(customer?.phone)}
+            </p>
+            <p className="mt-3 text-xs text-muted">
+              Por segurança, os dados completos de entrega não são exibidos nesta página.
+            </p>
           </div>
         </section>
       </div>

@@ -43,6 +43,9 @@ function message(error: z.ZodError): string {
   return error.issues[0]?.message ?? "Dados inválidos";
 }
 
+// Mensagens do banco/gateway ficam apenas no servidor: nunca são devolvidas ao navegador.
+const CHECKOUT_ERROR = "Não foi possível finalizar seu pedido. Tente novamente em instantes.";
+
 export async function checkout(
   _prev: ActionState,
   formData: FormData,
@@ -76,7 +79,7 @@ export async function checkout(
   const { data: settingsData, error: settingsError } = await admin
     .from("settings")
     .select("key,value");
-  if (settingsError) return { ok: false, message: settingsError.message };
+  if (settingsError) return { ok: false, message: CHECKOUT_ERROR };
 
   const settings = new Map(
     (settingsData ?? [])
@@ -102,7 +105,7 @@ export async function checkout(
       "id,name,slug,image_url,source_url,price_cents,stock_status,active,product_variants(id,name,price_cents,stock_status)",
     )
     .in("id", ids);
-  if (productsError) return { ok: false, message: productsError.message };
+  if (productsError) return { ok: false, message: CHECKOUT_ERROR };
 
   const productMap = new Map((products ?? []).map((product) => [product.id, product]));
   const lines: {
@@ -172,7 +175,7 @@ export async function checkout(
     })
     .select("id")
     .single();
-  if (customerError) return { ok: false, message: customerError.message };
+  if (customerError) return { ok: false, message: CHECKOUT_ERROR };
 
   const { data: order, error: orderError } = await admin
     .from("orders")
@@ -187,12 +190,12 @@ export async function checkout(
     })
     .select("id")
     .single();
-  if (orderError) return { ok: false, message: orderError.message };
+  if (orderError) return { ok: false, message: CHECKOUT_ERROR };
 
   const { error: itemsError } = await admin.from("order_items").insert(
     lines.map((line) => ({ ...line, order_id: order.id })),
   );
-  if (itemsError) return { ok: false, message: itemsError.message };
+  if (itemsError) return { ok: false, message: CHECKOUT_ERROR };
 
   const { data: payment, error: paymentError } = await admin
     .from("payments")
@@ -205,7 +208,7 @@ export async function checkout(
     })
     .select("id")
     .single();
-  if (paymentError) return { ok: false, message: paymentError.message };
+  if (paymentError) return { ok: false, message: CHECKOUT_ERROR };
 
   if (live) {
     const paymentInput = {
@@ -245,11 +248,8 @@ export async function checkout(
           })
           .eq("id", payment.id);
       }
-    } catch (error) {
-      return {
-        ok: false,
-        message: error instanceof Error ? error.message : "Falha ao gerar o pagamento.",
-      };
+    } catch {
+      return { ok: false, message: CHECKOUT_ERROR };
     }
   }
 

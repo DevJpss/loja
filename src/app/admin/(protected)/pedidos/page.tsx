@@ -88,7 +88,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
       <section>
         <h2 className="mb-6 font-display text-3xl font-bold uppercase">Pedidos</h2>
         <p role="alert" className="border border-red-500 bg-white p-6 text-sm text-red-700">
-          Não foi possível carregar os pedidos: {error.message}
+          Não foi possível carregar os pedidos. Tente novamente.
         </p>
       </section>
     );

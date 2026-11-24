@@ -24,7 +24,7 @@ export async function signIn(
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return { ok: false, message: error.message };
+  if (error) return { ok: false, message: "E-mail ou senha incorretos." };
 
   redirect("/admin/produtos");
 }

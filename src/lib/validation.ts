@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+const httpUrl = z.string().trim().refine((value) => {
+  try {
+    return ["http:", "https:"].includes(new URL(value).protocol);
+  } catch {
+    return false;
+  }
+}, "Informe uma URL válida");
+
 export const productSchema = z.object({
   name: z.string().trim().min(3, "Nome muito curto").max(120),
   slug: z.string().trim().min(3, "Slug muito curto").max(140).regex(/^[a-z0-9-]+$/, "Use apenas letras minúsculas, números e hífen"),
@@ -7,13 +15,23 @@ export const productSchema = z.object({
   category_id: z.string().uuid().nullable(),
   price_cents: z.coerce.number().int().min(1, "Preço deve ser maior que zero"),
   compare_at_price_cents: z.coerce.number().int().min(0).nullable().optional(),
-  image_url: z.string().trim().url("Informe uma URL válida"),
-  source_url: z.string().trim().url("Informe uma URL válida"),
+  image_url: httpUrl,
+  source_url: httpUrl,
   stock_status: z.enum(["available", "low", "out_of_stock"]),
   active: z.boolean(),
 });
 
 export type ParsedProduct = z.infer<typeof productSchema>;
+
+/** Payload mínimo das notificações de pagamento; campos extras são ignorados. */
+export const paymentWebhookSchema = z.object({
+  type: z.string().optional(),
+  data: z
+    .object({
+      id: z.union([z.string().min(1), z.number().int().positive()]).optional(),
+    })
+    .optional(),
+});
 
 export function parseProductForm(formData: FormData) {
   const price = Number(formData.get("price"));

@@ -219,6 +219,7 @@ pago. O cliente vê o status e o rastreio em `/pedido/[code]`.
 | `/admin/pedidos/[id]` | Detalhe, ações de compra/envio e notificações |
 | `/admin/fornecedor` | Custo/disponibilidade do fornecedor e histórico (checagem manual) |
 | `/api/webhooks/pagamento` | Webhook do Mercado Pago |
+| `/api/health` | Healthcheck público (200 só quando o banco responde) |
 | `/api/cron/supplier-check` | Job futuro, protegido por `CRON_SECRET`; desativado sem fonte autorizada |
 | `/sitemap.xml`, `/robots.txt` | SEO básico |
 
@@ -231,13 +232,26 @@ editar ou excluir produtos. Páginas protegidas usam `instant = false` e
 
 ## Segurança
 
+- Headers em todas as respostas via `next.config.ts`: CSP, HSTS, `nosniff`,
+  `X-Frame-Options`/`frame-ancestors`, `Referrer-Policy` e `Permissions-Policy`.
+  O CSP usa `'unsafe-inline'` para os scripts do Next/JSON-LD; nonce exigiria
+  renderização dinâmica e quebraria `cacheComponents`/`partialPrefetching`.
+  `connect-src` inclui `https://viacep.com.br`, usado pelo formulário de CEP.
 - A chave `service_role` é usada apenas em código de servidor.
 - RLS habilitado: catálogo legível por todos; tabelas de clientes/pedidos sem
   acesso público.
-- Webhook valida assinatura HMAC e usa `webhook_events` para idempotência.
+- `/pedido/[code]` mostra só primeiro nome, e-mail/telefone parciais e cidade/UF;
+  rua, número, CEP e demais dados não são renderizados.
+- Webhook valida assinatura HMAC, limita o corpo a 64 KB e só registra o evento
+  depois de consultar o pagamento. Se o gateway falhar, o evento fica livre para
+  reenvio.
+- Erros do Supabase/gateway nunca são devolvidos ao navegador: checkout e painel
+  usam mensagens genéricas. `error.tsx` e `global-error.tsx` cobrem falhas de UI.
 - Preços e frete por UF são recalculados no servidor; o navegador envia só
   IDs, quantidades e o endereço (a tabela de frete não é confiada ao cliente).
 - Dados de cartão/Pix nunca são armazenados — ficam no gateway.
+- CI em `.github/workflows/ci.yml` roda lint, `tsc`, testes e build em cada push
+  ou PR para `main`.
 
 ## Validação
 
@@ -250,13 +264,19 @@ npm run build
 
 `npm test` compila os helpers/testes para `.test-dist/` (ignorado pelo Git e pelo
 ESLint) e roda a suíte `node:test` sem dependências extras: pedidos/taxas, filtros
-e CSV do painel, URL canônica, URLs de parceiro e escape de JSON-LD.
+e CSV do painel, URL canônica, URLs de parceiro, escape de JSON-LD, máscara de
+PII, assinatura HMAC do webhook e schemas de produto/notificação.
 
-Build de referência: 43 páginas, `/api/webhooks/pagamento` e
+Build de referência: 44 páginas, com `/api/webhooks/pagamento`, `/api/health` e
 `/api/cron/supplier-check` como rotas dinâmicas.
 
 ## Próximas fases
 
-- Fase 2: import CSV, atualização de preços via Edge Function, blog sobre treino
-- Fase 4: fila de compra, custo/margem, rastreio e notificações (e-mail/WhatsApp)
-- Fase 5/6: analytics, afiliados, automação/logística e integrações com ERP
+Fora de escopo: domínio próprio e Fase 0 (CNPJ/contador/notas/páginas legais).
+
+- Onda 2 — confiança e conversão: FAQ, contato/trocas, breadcrumbs, `lastmod` no
+  sitemap, compatibilidade no PDP e avaliações verificadas.
+- Onda 3 — operação: backups, Sentry, e-mails transacionais, rate limiting e
+  migração para `sb_publishable_`/`sb_secret_` (dependem de orçamento).
+- Onda 4 — crescimento: analytics com consentimento, UTM, cupom, recuperação de
+  carrinho, WebP/AVIF e medição de Core Web Vitals.

@@ -9,6 +9,7 @@ import type { ActionState } from "@/lib/types";
 
 const uuidSchema = z.string().uuid();
 const updated: ActionState = { ok: true, message: "Status atualizado." };
+const DB_ERROR = "Não foi possível atualizar o pedido. Tente novamente.";
 
 async function changeStatus(input: {
   id: FormDataEntryValue | null;
@@ -24,7 +25,7 @@ async function changeStatus(input: {
     .select("id,code,status")
     .eq("id", parsedId.data)
     .maybeSingle();
-  if (orderError) return { ok: false, message: orderError.message };
+  if (orderError) return { ok: false, message: DB_ERROR };
   if (!order) return { ok: false, message: "Pedido não encontrado." };
   if (!input.from.includes(order.status)) {
     return { ok: false, message: `Transição inválida para o status atual (${order.status}).` };
@@ -34,7 +35,7 @@ async function changeStatus(input: {
     .from("orders")
     .update(input.patch)
     .eq("id", order.id);
-  if (error) return { ok: false, message: error.message };
+  if (error) return { ok: false, message: DB_ERROR };
 
   revalidatePath("/admin/pedidos");
   revalidatePath(`/admin/pedidos/${order.id}`);

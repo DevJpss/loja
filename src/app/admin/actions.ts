@@ -13,6 +13,8 @@ function firstIssue(error: z.ZodError): string {
   return error.issues[0]?.message ?? "Dados inválidos";
 }
 
+const DB_ERROR = "Não foi possível salvar. Tente novamente.";
+
 export async function createProduct(
   _prev: ActionState,
   formData: FormData,
@@ -36,7 +38,7 @@ export async function createProduct(
     specs: {},
   });
 
-  if (error) return { ok: false, message: error.message };
+  if (error) return { ok: false, message: DB_ERROR };
 
   updateTag("products");
   revalidatePath("/admin/produtos");
@@ -74,7 +76,7 @@ export async function updateProduct(
     })
     .eq("id", id);
 
-  if (error) return { ok: false, message: error.message };
+  if (error) return { ok: false, message: DB_ERROR };
 
   updateTag("products");
   revalidatePath("/admin/produtos");

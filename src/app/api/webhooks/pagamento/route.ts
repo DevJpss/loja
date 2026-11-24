@@ -4,11 +4,9 @@ import {
   verifyWebhookSignature,
 } from "@/lib/payments/mercadopago";
 import { markOrderPaid } from "@/lib/payments/orders";
+import { paymentWebhookSchema } from "@/lib/validation";
 
-type Notification = {
-  type?: string;
-  data?: { id?: string | number };
-};
+const MAX_BODY_BYTES = 64 * 1024;
 
 export async function POST(request: Request) {
   if (process.env.PAYMENT_MODE !== "live") {
@@ -18,14 +16,29 @@ export async function POST(request: Request) {
   const signature = request.headers.get("x-signature");
   const requestId = request.headers.get("x-request-id");
 
-  let body: Notification;
+  let rawBody: string;
   try {
-    body = (await request.json()) as Notification;
+    rawBody = await request.text();
+  } catch {
+    return Response.json({ error: "Notificação inválida" }, { status: 400 });
+  }
+  if (rawBody.length > MAX_BODY_BYTES) {
+    return Response.json({ error: "Notificação muito grande" }, { status: 413 });
+  }
+
+  let payload: unknown;
+  try {
+    payload = JSON.parse(rawBody);
   } catch {
     return Response.json({ error: "JSON inválido" }, { status: 400 });
   }
 
-  const notificationId = String(body.data?.id ?? "");
+  const parsed = paymentWebhookSchema.safeParse(payload);
+  if (!parsed.success) {
+    return Response.json({ error: "Notificação inválida" }, { status: 400 });
+  }
+
+  const notificationId = parsed.data.data?.id == null ? "" : String(parsed.data.data.id);
   if (!notificationId) {
     return Response.json({ error: "ID ausente" }, { status: 400 });
   }
@@ -34,19 +47,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Assinatura inválida" }, { status: 401 });
   }
 
-  const admin = createAdminClient();
-  const { error: eventError } = await admin.from("webhook_events").insert({
-    provider: "mercadopago",
-    event_id: notificationId,
-    payload: body,
-  });
-  if (eventError) {
-    // Conflito = evento já processado.
-    if (eventError.code === "23505") return Response.json({ received: true });
-    return Response.json({ error: "Falha ao registrar evento" }, { status: 500 });
-  }
-
-  if (body.type !== "payment") {
+  if (parsed.data.type !== "payment") {
     return Response.json({ received: true });
   }
 
@@ -59,10 +60,23 @@ export async function POST(request: Request) {
         status: payment.status,
       });
     }
-  } catch {
-    // Mercado Pago pode responder depois; o webhook pode ser reenviado.
-    return Response.json({ error: "Falha ao consultar pagamento" }, { status: 500 });
-  }
 
-  return Response.json({ received: true });
+    // Só registra o evento depois de processá-lo. Se a consulta ao gateway falhar,
+    // não marcamos como processado e o reenvio do Mercado Pago será aceito.
+    const admin = createAdminClient();
+    const { error: eventError } = await admin.from("webhook_events").insert({
+      provider: "mercadopago",
+      event_id: notificationId,
+      payload: parsed.data,
+      processed_at: new Date().toISOString(),
+    });
+    if (eventError && eventError.code !== "23505") {
+      return Response.json({ error: "Falha ao registrar evento" }, { status: 500 });
+    }
+
+    return Response.json({ received: true });
+  } catch {
+    // Erro genérico de propósito: detalhes do gateway não vazam para a resposta.
+    return Response.json({ error: "Falha ao processar pagamento" }, { status: 500 });
+  }
 }
