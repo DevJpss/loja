@@ -8,7 +8,7 @@ import { SITE_NAME } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Catálogo de acessórios de treino",
   description:
-    "Caneleiras, anilhas de microloading, bands, straps e acessórios de treino no catálogo da Evidence Reps. Filtre por categoria e compre com Pix ou cartão.",
+    "Caneleiras, anilhas e carga, bands, straps e acessórios de treino no catálogo da Evidence Reps. Filtre por categoria e compre com Pix ou cartão.",
   alternates: { canonical: "/produtos" },
   openGraph: {
     title: `Catálogo | ${SITE_NAME}`,

@@ -26,14 +26,19 @@ npm run dev
 
 Abra http://localhost:3000.
 
-Sem variáveis de ambiente, o site usa um **catálogo de demonstração** com 13
-produtos. Com Supabase configurado, catálogo, variantes e pedidos vêm do banco.
+Sem variáveis de ambiente, o site usa um **catálogo local** com 13 produtos e 6
+categorias. Com Supabase configurado, catálogo, variantes e pedidos vêm do banco.
 
-O catálogo demo inclui um produto real — o **par de polia baixa para tornozeleira
-(cross over)** — com ficha técnica e fotos locais em `public/products/`. O link do
-fornecedor fica apenas no banco e aparece no painel admin (fila de compra); nunca
-é enviado ao navegador do cliente. As fotos são do anúncio do fornecedor e o uso
-foi autorizado pelo operador; guarde o comprovante da autorização.
+Os 13 produtos são **reais**: cada um corresponde a um anúncio verificado no
+browser logado da Shopee, com título, especificações, custo e fotos locais em
+`public/products/` (34 JPEGs, 1 a 5 por produto). A categoria `microloading`
+mantém o slug, mas se chama **Anilhas e Carga** — as anilhas disponíveis são de
+1 kg e 1,25 kg, não microcargas de 0,25 kg. As fotos são dos anúncios e o uso foi
+autorizado pelo operador; guarde o comprovante da autorização.
+
+O link do fornecedor (`source_url`) fica apenas no banco e aparece no painel
+admin (fila de compra e `/admin/fornecedor`); `publicProduct()` o remove antes de
+enviar produtos ao navegador do cliente.
 
 ## Configurar Supabase
 
@@ -52,7 +57,7 @@ insert into admins (user_id)
 select id from auth.users where email = 'voce@exemplo.com';
 ```
 
-5. Popular o catálogo com os 13 produtos de demonstração:
+5. Popular o catálogo com os 13 produtos reais, semear os 13 itens monitorados e remover slugs antigos:
 
 ```bash
 node --env-file=.env.local scripts/seed.mjs
@@ -152,10 +157,11 @@ absorver a diferença na compra do fornecedor. A regra de frete grátis
 (`free_shipping_threshold_cents`, padrão R$ 299,00) continua valendo. A chave
 antiga `flat_shipping_cents` não é mais usada.
 
-O par de polia baixa é vendido a **R$ 49,90** (custo R$ 26,32 na Shopee).
-Descontando o custo, o frete real e a taxa do gateway, o lucro estimado é de
-R$ 22,96 no Pix e R$ 21,17 no cartão no Sudeste, ficando entre R$ 19,94 e
-R$ 24,78 em todas as regiões.
+Os 13 itens foram precificados pela regra abaixo, com custos entre R$ 13,75 e
+R$ 35,90 e preços entre R$ 37,90 e R$ 59,90. No caso do par de polia baixa, o
+preço é **R$ 49,90** (custo R$ 26,32 na Shopee). Descontando o custo, o frete real
+e a taxa do gateway, o lucro estimado é de R$ 22,96 no Pix e R$ 21,17 no cartão
+no Sudeste, ficando entre R$ 19,94 e R$ 24,78 em todas as regiões.
 
 ### Checagem diária do fornecedor
 

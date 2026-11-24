@@ -50,9 +50,8 @@ export default async function Home() {
             evidence.
           </h1>
           <p className="max-w-xl text-lg leading-relaxed text-muted">
-            Caneleiras, anilhas de microloading de 0,25 a 1,25 kg, bands, straps e
-            acessórios para progredir em passos pequenos — com critério, não com
-            promessas.
+            Caneleiras, anilhas, bands, straps e acessórios de treino escolhidos
+            pela função — para progredir com critério, não com promessas.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
@@ -89,8 +88,8 @@ export default async function Home() {
           </Link>
           <div className="grid grid-cols-3 bg-ink text-white">
             <div className="flex flex-col gap-1 p-4">
-              <span className="font-display text-xl font-semibold uppercase">0,25 kg</span>
-              <span className="text-xs text-line">Microloading</span>
+              <span className="font-display text-xl font-semibold uppercase">1 kg</span>
+              <span className="text-xs text-line">Anilhas e carga</span>
             </div>
             <div className="flex flex-col gap-1 border-l border-white/20 p-4">
               <span className="font-display text-xl font-semibold uppercase">Passo a passo</span>
@@ -162,9 +161,9 @@ export default async function Home() {
         </h2>
         <div className="mt-6 grid gap-6 text-sm leading-relaxed text-muted sm:grid-cols-3">
           <p>
-            <strong className="text-ink">Passos pequenos.</strong> Microloading permite
-            ajustes de carga abaixo do menor disco da barra, apoiando a progressão
-            gradual sem mudar a técnica.
+            <strong className="text-ink">Passos pequenos.</strong> Anilhas de 1 kg e
+            1,25 kg permitem ajustar a carga sem trocar toda a configuração da barra,
+            apoiando a progressão gradual sem mudar a técnica.
           </p>
           <p>
             <strong className="text-ink">Função antes de aparência.</strong> Straps,

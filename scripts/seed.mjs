@@ -12,6 +12,42 @@ const supabase = createClient(url, key, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
 
+// Custo real negociado em cada anúncio, em centavos. A venda é calculada pela regra
+// custo + R$ 23,58, arredondada para cima até terminar em ,90 (ver supplier-pricing).
+const supplierItems = {
+  "polia-baixa-tornozeleira-cross-over": { id: "23832623167", cost: 2632 },
+  "caneleira-peso-1kg-par": { id: "21699207485", cost: 2700 },
+  "caneleira-peso-2kg-par": { id: "19399261630", cost: 2902 },
+  "anilha-1kg-ferro-fundido": { id: "20697078496", cost: 3590 },
+  "par-anilhas-pintadas-1a5kg": { id: "58213241406", cost: 2999 },
+  "anilha-125kg-justgofit": { id: "23794014733", cost: 2175 },
+  "kit-5-mini-band": { id: "10742618126", cost: 2061 },
+  "faixa-elastica-theraband-2m": { id: "18773158690", cost: 2490 },
+  "par-straps-algodao": { id: "23895903148", cost: 1590 },
+  "tala-strap-8": { id: "22294281995", cost: 1590 },
+  "mordedor-jawzrsize": { id: "23298899051", cost: 1375 },
+  "mascara-3d-bloqueio-luz": { id: "20997987038", cost: 2191 },
+  "shaker-700ml-mola-peneira": { id: "20333223521", cost: 2149 },
+};
+
+// Slugs da vitrine antiga, substituídos pelos anúncios reais. Pedidos históricos
+// guardam snapshots em order_items, então a remoção não afeta pedidos já feitos.
+const legacyProductSlugs = [
+  "polia-baixa-tornozeleira",
+  "caneleira-punho-carga",
+  "caneleira-tornozelo-polia",
+  "anilha-micro-025-par",
+  "anilha-micro-050-par",
+  "anilha-micro-125-par",
+  "mini-band-latex",
+  "band-longa-tecido",
+  "strap-reto-algodao",
+  "strap-em-8",
+  "mordedor-treino",
+  "venda-olhos",
+  "shaker-700ml",
+];
+
 async function run() {
   const { data: categories, error: catError } = await supabase
     .from("categories")
@@ -50,6 +86,12 @@ async function run() {
 
   if (productsError) throw productsError;
 
+  const { error: cleanupError } = await supabase
+    .from("products")
+    .delete()
+    .in("slug", legacyProductSlugs);
+  if (cleanupError) throw cleanupError;
+
   const { data: monitorData, error: monitorReadError } = await supabase
     .from("settings")
     .select("value")
@@ -61,20 +103,25 @@ async function run() {
     monitorData?.value && typeof monitorData.value === "object" && monitorData.value.products
       ? monitorData.value
       : { products: {} };
-  const monitoredSlug = "polia-baixa-tornozeleira-cross-over";
-  existingMonitor.products[monitoredSlug] = {
-    ...(existingMonitor.products[monitoredSlug] ?? {}),
-    supplier_item_id: "23832623167",
-    price_auto_adjust: true,
-    supplier_price_cents: 2632,
-    supplier_available: true,
-    last_error: null,
-  };
+
+  // Reconstrói o mapa só com os slugs atuais: remove monitores órfãos e preserva
+  // histórico e checagens manuais já feitas nos itens que continuam no catálogo.
+  const monitorProducts = {};
+  for (const [slug, item] of Object.entries(supplierItems)) {
+    monitorProducts[slug] = {
+      ...(existingMonitor.products[slug] ?? {}),
+      supplier_item_id: item.id,
+      price_auto_adjust: true,
+      supplier_price_cents: item.cost,
+      supplier_available: true,
+      last_error: null,
+    };
+  }
 
   const { error: monitorError } = await supabase
     .from("settings")
     .upsert(
-      { key: "supplier_monitor", value: existingMonitor },
+      { key: "supplier_monitor", value: { products: monitorProducts } },
       { onConflict: "key" },
     );
   if (monitorError) throw monitorError;
@@ -110,7 +157,7 @@ async function run() {
     if (variantError) throw variantError;
   }
 
-  console.log(`Seed concluído: ${demoCategories.length} categorias, ${demoProducts.length} produtos.`);
+  console.log(`Seed concluído: ${demoCategories.length} categorias, ${demoProducts.length} produtos, ${Object.keys(monitorProducts).length} itens monitorados.`);
 }
 
 run().catch((error) => {
