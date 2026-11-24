@@ -32,8 +32,8 @@ produtos. Com Supabase configurado, catálogo, variantes e pedidos vêm do banco
 O catálogo demo inclui um produto real — o **par de polia baixa para tornozeleira
 (cross over)** — com ficha técnica e fotos locais em `public/products/`. O link do
 fornecedor fica apenas no banco e aparece no painel admin (fila de compra); nunca
-é enviado ao navegador do cliente. As fotos são do anúncio do fornecedor: confirme
-com ele o direito de uso antes de publicar.
+é enviado ao navegador do cliente. As fotos são do anúncio do fornecedor e o uso
+foi autorizado pelo operador; guarde o comprovante da autorização.
 
 ## Configurar Supabase
 
