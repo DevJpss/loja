@@ -80,9 +80,21 @@ Nenhuma cobrança é feita no modo demo.
 
 1. Obtenha access token e webhook secret em https://www.mercadopago.com.br/developers.
 2. Preencha as variáveis e mude `PAYMENT_MODE=live`.
-3. Cadastre `https://seu-dominio/api/webhooks/pagamento` como URL de notificação.
-4. Pix gera QR Code na página do pedido; cartão redireciona para o checkout do
+3. Cadastre `https://seu-dominio/api/webhooks/pagamento` como URL de notificação
+   com o evento **Pagamentos** (`payment`).
+4. **Para Pix, é obrigatório ter uma chave Pix cadastrada na conta do Mercado Pago.**
+   Sem chave, a API retorna `Collector user without key enabled for QR render`.
+5. Pix gera QR Code na página do pedido; cartão redireciona para o checkout do
    gateway. A confirmação **sempre** vem do webhook assinado, nunca do navegador.
+
+### Produção (24/11/2026)
+
+- URL em uso: `https://lojascec.vercel.app` (domínio `www.evidencereps.com.br`
+  aguardando configuração de DNS).
+- Webhook: `https://lojascec.vercel.app/api/webhooks/pagamento`, evento `payment`,
+  assinatura HMAC validada (401 sem assinatura, 200 com assinatura correta).
+- Pix e preferência de cartão criados com sucesso pela API real; pedido de teste
+  cancelado e removido do banco após a validação.
 
 ## Rotas
 
