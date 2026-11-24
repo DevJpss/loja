@@ -28,7 +28,7 @@ export const demoProducts: Product[] = [
       Garantia: "3 meses contra defeitos de fabricação",
     },
     image_url: "/products/polia-baixa-tornozeleira-1.jpg",
-    price_cents: 6990, compare_at_price_cents: null,
+    price_cents: 4990, compare_at_price_cents: null,
     source_url: "https://shopee.com.br/PAR-Polia-Baixa-Tornozeleira-Cross-Over-Puxador-Gl%C3%BAteo-Academia-Muscula%C3%A7%C3%A3o-Funcional-Fitness-Puxador-Coice-i.329230503.23832623167",
     stock_status: "available", active: true, categories: { name: "Polia e Cross Over", slug: "polia-cross-over" },
   },

@@ -152,6 +152,11 @@ absorver a diferença na compra do fornecedor. A regra de frete grátis
 (`free_shipping_threshold_cents`, padrão R$ 299,00) continua valendo. A chave
 antiga `flat_shipping_cents` não é mais usada.
 
+O par de polia baixa é vendido a **R$ 49,90** (custo R$ 26,32 na Shopee).
+Descontando o custo, o frete real e a taxa do gateway, o lucro estimado é de
+R$ 22,96 no Pix e R$ 21,17 no cartão no Sudeste, ficando entre R$ 19,94 e
+R$ 24,78 em todas as regiões.
+
 As notificações são links gerados no painel (`mailto:` e `wa.me`), sem serviço
 pago. O cliente vê o status e o rastreio em `/pedido/[code]`.
 
