@@ -250,12 +250,13 @@ editar ou excluir produtos. Páginas protegidas usam `instant = false` e
 - Preços e frete por UF são recalculados no servidor; o navegador envia só
   IDs, quantidades e o endereço (a tabela de frete não é confiada ao cliente).
 - Dados de cartão/Pix nunca são armazenados — ficam no gateway.
-- CI em `.github/workflows/ci.yml` roda lint, `tsc`, testes e build em cada push
-  ou PR para `main`.
+- CI em `.github/workflows/ci.yml` roda lint, `next typegen` + `tsc`, testes e
+  build em cada push ou PR para `main`.
 
 ## Validação
 
 ```bash
+npx next typegen   # necessário em checkout limpo: gera .next/types
 npx tsc --noEmit
 npm run lint
 npm test
