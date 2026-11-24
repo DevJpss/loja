@@ -20,6 +20,13 @@ export async function markOrderPaid(input: {
 
   const now = new Date().toISOString();
 
+  // Preserva o payload original (forma de pagamento, QR, init_point) ao confirmar.
+  const { data: existingPayment } = await admin
+    .from("payments")
+    .select("payload")
+    .eq("order_id", order.id)
+    .maybeSingle();
+
   await admin
     .from("orders")
     .update({
@@ -34,7 +41,10 @@ export async function markOrderPaid(input: {
     .update({
       status: input.status ?? "approved",
       ...(input.providerPaymentId ? { provider_payment_id: input.providerPaymentId } : {}),
-      payload: { confirmed_at: now },
+      payload: {
+        ...((existingPayment?.payload ?? {}) as Record<string, unknown>),
+        confirmed_at: now,
+      },
     })
     .eq("order_id", order.id)
     .neq("status", "approved");

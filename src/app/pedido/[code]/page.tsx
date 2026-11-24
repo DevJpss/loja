@@ -71,12 +71,40 @@ async function OrderDetails({ params }: Props) {
         </span>
       </div>
 
-      {paid ? (
+      {order.status === "shipped" || order.status === "delivered" ? (
+        <div className="mb-8 border border-accent bg-white p-6">
+          <h2 className="font-display text-2xl font-bold uppercase">
+            {order.status === "delivered" ? "Pedido entregue ✓" : "Seu pedido foi enviado ✓"}
+          </h2>
+          <p className="mt-2 text-sm text-muted">
+            {order.status === "delivered"
+              ? "Esperamos que você goste! Em caso de dúvidas, responda ao e-mail de confirmação."
+              : "Seu pedido está a caminho. Acompanhe pelo código abaixo."}
+          </p>
+          {order.tracking_code ? (
+            <div className="mt-4 border-t border-line pt-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted">
+                Código de rastreio
+              </p>
+              <p className="mt-1 break-all font-mono text-lg font-semibold">
+                {order.tracking_code}
+              </p>
+              <a
+                href="https://www.correios.com.br/acompanhe"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-block text-sm font-semibold text-accent hover:underline"
+              >
+                Rastrear nos Correios ↗
+              </a>
+            </div>
+          ) : null}
+        </div>
+      ) : paid ? (
         <div className="mb-8 border border-accent bg-white p-6">
           <h2 className="font-display text-2xl font-bold uppercase">Pagamento confirmado ✓</h2>
           <p className="mt-2 text-sm text-muted">
             Recebemos seu pedido. Você receberá as próximas atualizações por e-mail.
-            {order.tracking_code ? ` Código de rastreio: ${order.tracking_code}.` : ""}
           </p>
         </div>
       ) : (

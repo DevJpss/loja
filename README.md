@@ -96,6 +96,34 @@ Nenhuma cobrança é feita no modo demo.
 - Pix e preferência de cartão criados com sucesso pela API real; pedido de teste
   cancelado e removido do banco após a validação.
 
+## Fila de pedidos (Fase 4)
+
+Em `/admin/pedidos`, cada pedido abre o detalhe em `/admin/pedidos/[id]`. O fluxo
+do operador é:
+
+1. **Iniciar compra** (`paid` → `purchasing`) no fornecedor, usando seu próprio
+   pagamento — nunca o cartão/CPF do cliente.
+2. **Registrar compra** (`purchasing` → `purchased`): informe custo em reais, ID
+   do pedido no fornecedor e observações opcionais.
+3. **Registrar envio** (`purchased` → `shipped`): informe o código de rastreio.
+4. **Marcar entregue** (`shipped` → `delivered`).
+5. Cancelamento, reembolso e expiração de `pending_payment` também são feitos no
+   detalhe. Transições inválidas são bloqueadas.
+
+O detalhe calcula a margem estimada:
+`total - custo - frete - taxa do gateway`. A taxa é uma estimativa configurável
+em `settings` (valores padrão se as chaves não existirem):
+
+| Chave | Padrão | Uso |
+|---|---|---|
+| `gateway_fee_pix_bps` | `100` | Taxa Pix em pontos-base (1%) |
+| `gateway_fee_card_bps` | `399` | Taxa de cartão em pontos-base (3,99%) |
+| `gateway_fee_fixed_cents` | `30` | Valor fixo por transação, em centavos |
+| `whatsapp_number` | `""` | Número usado nos links `wa.me` (com DDI) |
+
+As notificações são links gerados no painel (`mailto:` e `wa.me`), sem serviço
+pago. O cliente vê o status e o rastreio em `/pedido/[code]`.
+
 ## Rotas
 
 | Rota | Descrição |
@@ -108,7 +136,8 @@ Nenhuma cobrança é feita no modo demo.
 | `/pedido/[code]` | Acompanhamento do pedido e pagamento |
 | `/admin/login` | Login do painel |
 | `/admin/produtos` | Lista, edição e exclusão de produtos |
-| `/admin/pedidos` | Fila de pedidos |
+| `/admin/pedidos` | Fila de pedidos com custo e margem |
+| `/admin/pedidos/[id]` | Detalhe, ações de compra/envio e notificações |
 | `/api/webhooks/pagamento` | Webhook do Mercado Pago |
 | `/sitemap.xml`, `/robots.txt` | SEO básico |
 
