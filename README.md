@@ -290,6 +290,10 @@ chama `updateTag("products")` após criar, editar ou excluir produtos e
   fica verde e mostra "Adicionado ✓" por instantes.
 - `CatalogGrid` usa `?categoria=` como fonte da verdade, então os links dos
   menus filtram o catálogo mesmo em navegação client-side.
+- Transição entre páginas/abas com o `<ViewTransition>` do React 19.3 no
+  `app/template.tsx`: o conteúdo antigo sai em 140 ms e o novo entra em 260 ms
+  com um leve deslocamento vertical. O header fica ancorado fora da animação;
+  navegadores sem a API usam um fallback CSS de entrada.
 - Tudo sem novas dependências e com `prefers-reduced-motion: reduce`
   neutralizando animações e transições.
 
@@ -321,7 +325,8 @@ Fora de escopo: domínio próprio e Fase 0 (CNPJ/contador/notas/páginas legais)
   compatibilidade no PDP e avaliações verificadas implementados. Contato/trocas
   ficaram adiados (o banco não tem WhatsApp/e-mail de contato cadastrados).
 - Onda UX — interface e interações: implementada (header fixo, dropdowns, menu
-  mobile, mini-carrinho, microanimações e filtro sincronizado com a URL).
+  mobile, mini-carrinho, microanimações, transições entre páginas e filtro
+  sincronizado com a URL).
 - Onda 3 — operação: backups, Sentry, e-mails transacionais, rate limiting e
   migração para `sb_publishable_`/`sb_secret_` (dependem de orçamento).
 - Onda 4 — crescimento: analytics com consentimento, UTM, cupom, recuperação de

@@ -12,7 +12,10 @@ export default async function Header() {
       <div className="bg-ink px-4 py-2.5 text-center text-xs tracking-[0.04em] text-white">
         EVERY REP BACKED BY EVIDENCE &nbsp;·&nbsp; Frete grátis acima de R$ 299
       </div>
-      <header className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-line/70 bg-canvas/95 px-4 py-4 backdrop-blur sm:px-8 lg:px-16">
+      <header
+        style={{ viewTransitionName: "er-header" }}
+        className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-line/70 bg-canvas/95 px-4 py-4 backdrop-blur sm:px-8 lg:px-16"
+      >
         <Link
           href="/"
           className="font-display text-3xl font-bold uppercase tracking-[0.08em] text-ink transition-colors hover:text-accent sm:text-4xl"
