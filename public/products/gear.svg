@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" role="img" aria-label="Acessório de academia">
+  <rect width="600" height="450" fill="#CACDD3"/>
+  <g fill="#121418">
+    <rect x="150" y="195" width="300" height="60" rx="10"/>
+    <rect x="120" y="150" width="60" height="150" rx="10"/>
+    <rect x="420" y="150" width="60" height="150" rx="10"/>
+  </g>
+  <rect x="150" y="195" width="300" height="14" fill="#2740E8"/>
+  <text x="300" y="385" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="4" fill="#121418">EVIDENCE REPS</text>
+</svg>

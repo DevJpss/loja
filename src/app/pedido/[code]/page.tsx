@@ -1,0 +1,187 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
+import { connection } from "next/server";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import ClearCart from "@/components/ClearCart";
+import { formatPrice } from "@/lib/format";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { simulatePayment } from "./actions";
+
+export const instant = false;
+
+export const metadata: Metadata = {
+  title: "Pedido",
+  description: "Acompanhe o status do seu pedido Evidence Reps.",
+};
+
+type Props = { params: Promise<{ code: string }> };
+
+type PaymentPayload = {
+  method?: "pix" | "card";
+  mode?: "demo" | "live";
+  qr_code?: string;
+  qr_code_base64?: string;
+  init_point?: string;
+};
+
+const statusLabels: Record<string, string> = {
+  pending_payment: "Aguardando pagamento",
+  paid: "Pagamento confirmado",
+  purchasing: "Comprando com o fornecedor",
+  purchased: "Comprado",
+  shipped: "Enviado",
+  delivered: "Entregue",
+  cancelled: "Cancelado",
+  refunded: "Reembolsado",
+};
+
+async function OrderDetails({ params }: Props) {
+  await connection();
+  const { code } = await params;
+  const admin = createAdminClient();
+
+  const { data: order } = await admin
+    .from("orders")
+    .select(
+      "id,code,status,subtotal_cents,shipping_cents,total_cents,created_at,paid_at,payment_provider,tracking_code,customers(full_name,email,phone,address),order_items(id,name_snapshot,image_snapshot,price_cents,qty),payments(id,provider,status,payload)",
+    )
+    .eq("code", code)
+    .maybeSingle();
+
+  if (!order) notFound();
+
+  const payment = Array.isArray(order.payments) ? order.payments[0] : null;
+  const payload = (payment?.payload ?? {}) as PaymentPayload;
+  const customer = Array.isArray(order.customers) ? order.customers[0] : order.customers;
+  const address = (customer?.address ?? {}) as Record<string, string>;
+  const paid = order.status !== "pending_payment";
+  const demo = order.payment_provider === "demo";
+
+  return (
+    <>
+      <ClearCart />
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-5">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted">Pedido</p>
+          <p className="font-display text-3xl font-bold uppercase">{order.code}</p>
+        </div>
+        <span className={`border px-4 py-2 text-sm font-semibold ${paid ? "border-accent text-accent" : "border-line bg-panel text-muted"}`}>
+          {statusLabels[order.status] ?? order.status}
+        </span>
+      </div>
+
+      {paid ? (
+        <div className="mb-8 border border-accent bg-white p-6">
+          <h2 className="font-display text-2xl font-bold uppercase">Pagamento confirmado ✓</h2>
+          <p className="mt-2 text-sm text-muted">
+            Recebemos seu pedido. Você receberá as próximas atualizações por e-mail.
+            {order.tracking_code ? ` Código de rastreio: ${order.tracking_code}.` : ""}
+          </p>
+        </div>
+      ) : (
+        <div className="mb-8 grid gap-6 border border-line bg-white p-6 md:grid-cols-2">
+          <div>
+            <h2 className="font-display text-2xl font-bold uppercase">Como pagar</h2>
+            {payload.method === "pix" && payload.qr_code_base64 ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`data:image/png;base64,${payload.qr_code_base64}`}
+                  alt="QR Code Pix"
+                  className="mt-4 h-48 w-48 object-contain"
+                />
+                <p className="mt-3 break-all rounded bg-panel p-3 text-xs text-muted">
+                  {payload.qr_code}
+                </p>
+              </>
+            ) : null}
+            {payload.method === "card" && payload.init_point ? (
+              <a
+                href={payload.init_point}
+                className="mt-4 inline-flex min-h-12 items-center bg-accent px-6 font-semibold text-white"
+              >
+                Pagar com cartão ↗
+              </a>
+            ) : null}
+            {demo ? (
+              <form action={simulatePayment} className="mt-5 border-t border-line pt-5">
+                <input type="hidden" name="code" value={order.code} />
+                <p className="mb-3 text-xs text-muted">
+                  Modo demo: nenhuma cobrança foi feita. Simule a aprovação para testar o fluxo.
+                </p>
+                <button
+                  type="submit"
+                  className="inline-flex min-h-11 items-center bg-ink px-5 font-semibold text-white"
+                >
+                  Simular pagamento aprovado
+                </button>
+              </form>
+            ) : null}
+          </div>
+          <div className="text-sm">
+            <p className="mb-2 font-semibold uppercase tracking-wider text-muted">Resumo</p>
+            <div className="flex justify-between border-b border-line py-2">
+              <span>Subtotal</span>
+              <span>{formatPrice(order.subtotal_cents)}</span>
+            </div>
+            <div className="flex justify-between border-b border-line py-2">
+              <span>Frete</span>
+              <span>{order.shipping_cents ? formatPrice(order.shipping_cents) : "Grátis"}</span>
+            </div>
+            <div className="mt-3 flex justify-between font-semibold">
+              <span>Total</span>
+              <span>{formatPrice(order.total_cents)}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="grid gap-8 md:grid-cols-2">
+        <section>
+          <h2 className="mb-3 font-display text-2xl font-bold uppercase">Itens</h2>
+          <div className="divide-y divide-line border-y border-line">
+            {(order.order_items ?? []).map((item) => (
+              <div key={item.id} className="flex justify-between gap-4 py-3 text-sm">
+                <span>{item.qty}× {item.name_snapshot}</span>
+                <span className="font-semibold">{formatPrice(item.price_cents * item.qty)}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className="text-sm">
+          <h2 className="mb-3 font-display text-2xl font-bold uppercase">Entrega</h2>
+          <div className="border border-line bg-white p-4 leading-relaxed">
+            <p className="font-semibold">{customer?.full_name}</p>
+            <p>{address.street}, {address.number} {address.complement ? `— ${address.complement}` : ""}</p>
+            <p>{address.neighborhood} — {address.city}/{address.state}</p>
+            <p>CEP {address.cep}</p>
+            <p className="mt-2 text-muted">{customer?.email} · {customer?.phone}</p>
+          </div>
+        </section>
+      </div>
+
+      <Link href="/produtos" className="mt-8 inline-block text-sm font-semibold text-accent">
+        Continuar comprando →
+      </Link>
+    </>
+  );
+}
+
+export default function OrderPage(props: Props) {
+  return (
+    <main className="px-4 py-12 sm:px-8 lg:px-16">
+      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
+        Acompanhamento
+      </span>
+      <h1 className="mb-8 mt-2 font-display text-6xl font-bold uppercase sm:text-7xl">
+        Seu pedido
+      </h1>
+      <Suspense
+        fallback={<p className="border border-line bg-panel p-8 text-center text-muted">Carregando pedido...</p>}
+      >
+        <OrderDetails {...props} />
+      </Suspense>
+    </main>
+  );
+}

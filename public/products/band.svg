@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" role="img" aria-label="Band de treino">
+  <rect width="600" height="450" fill="#CACDD3"/>
+  <rect x="90" y="150" width="420" height="150" rx="75" fill="none" stroke="#2740E8" stroke-width="38"/>
+  <rect x="150" y="185" width="300" height="80" rx="40" fill="none" stroke="#121418" stroke-width="14" opacity="0.25"/>
+  <text x="300" y="385" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="4" fill="#121418">BAND</text>
+</svg>
