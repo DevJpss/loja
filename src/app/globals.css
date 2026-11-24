@@ -13,6 +13,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
 }
 
 /* Âncoras não ficam escondidas atrás do header fixo. */
@@ -126,6 +127,34 @@ details[open] .faq-answer {
   transform: translateY(1px) scale(0.99);
 }
 
+/* Reveal durante o scroll: o HTML já nasce visível (data-visible="true") e só
+   o client component alterna o atributo quando IntersectionObserver existe. */
+[data-scroll-reveal] {
+  transition:
+    opacity 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 420ms ease;
+}
+
+[data-scroll-reveal][data-visible="true"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition-delay: var(--er-reveal-delay, 0ms);
+}
+
+[data-scroll-reveal][data-visible="false"] {
+  opacity: 0;
+  transform: translateY(14px) scale(0.99);
+  filter: blur(2px);
+  transition-delay: 0ms;
+}
+
+/* O fade de entrada dos cards passa a ser feito pelo wrapper de scroll. */
+[data-scroll-reveal] .er-fade-up {
+  animation: none;
+}
+
 /* Transição entre páginas/abas: o conteúdo antigo sai rápido e o novo entra
    com um leve deslocamento vertical. O header fica ancorado fora da animação. */
 @keyframes er-page-enter {
@@ -194,6 +223,7 @@ details[open] .faq-answer {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
 

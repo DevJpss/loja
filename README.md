@@ -294,6 +294,12 @@ chama `updateTag("products")` após criar, editar ou excluir produtos e
   `app/template.tsx`: o conteúdo antigo sai em 140 ms e o novo entra em 260 ms
   com um leve deslocamento vertical. O header fica ancorado fora da animação;
   navegadores sem a API usam um fallback CSS de entrada.
+- Blocos das páginas públicas usam `ScrollReveal` com `IntersectionObserver`:
+  aparecem ao entrar na viewport e saem suavemente ao deixá-la, voltando ao
+  rolar de volta. O HTML já vem visível (sem JS nada some) e o atraso de entrada
+  é aplicado só quando o movimento é permitido.
+- `scroll-behavior: smooth` e `scroll-padding-top` mantêm âncoras e rolagem
+  suaves sem esconder o conteúdo sob o header fixo.
 - Tudo sem novas dependências e com `prefers-reduced-motion: reduce`
   neutralizando animações e transições.
 
@@ -325,8 +331,8 @@ Fora de escopo: domínio próprio e Fase 0 (CNPJ/contador/notas/páginas legais)
   compatibilidade no PDP e avaliações verificadas implementados. Contato/trocas
   ficaram adiados (o banco não tem WhatsApp/e-mail de contato cadastrados).
 - Onda UX — interface e interações: implementada (header fixo, dropdowns, menu
-  mobile, mini-carrinho, microanimações, transições entre páginas e filtro
-  sincronizado com a URL).
+  mobile, mini-carrinho, microanimações, transições entre páginas, reveals no
+  scroll e filtro sincronizado com a URL).
 - Onda 3 — operação: backups, Sentry, e-mails transacionais, rate limiting e
   migração para `sb_publishable_`/`sb_secret_` (dependem de orçamento).
 - Onda 4 — crescimento: analytics com consentimento, UTM, cupom, recuperação de

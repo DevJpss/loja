@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import ScrollReveal from "@/components/ScrollReveal";
 import { jsonLdHtml } from "@/lib/jsonld";
 import { SITE_NAME } from "@/lib/site";
 
@@ -71,33 +72,35 @@ export default function FaqPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
       />
-      <Breadcrumbs items={[{ label: "Início", href: "/" }, { label: "Perguntas frequentes" }]} />
-      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-        Ajuda
-      </span>
-      <h1 className="mt-2 font-display text-6xl font-bold uppercase sm:text-7xl">
-        Perguntas frequentes
-      </h1>
-      <p className="mb-10 mt-4 max-w-2xl text-muted">
-        Respostas rápidas sobre pagamento, entrega e acompanhamento do pedido.
-      </p>
+      <ScrollReveal>
+        <Breadcrumbs items={[{ label: "Início", href: "/" }, { label: "Perguntas frequentes" }]} />
+        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
+          Ajuda
+        </span>
+        <h1 className="mt-2 font-display text-6xl font-bold uppercase sm:text-7xl">
+          Perguntas frequentes
+        </h1>
+        <p className="mb-10 mt-4 max-w-2xl text-muted">
+          Respostas rápidas sobre pagamento, entrega e acompanhamento do pedido.
+        </p>
 
-      <div className="max-w-3xl divide-y divide-line border-y border-line">
-        {questions.map(({ question, answer }) => (
-          <details key={question} className="group py-4">
-            <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-4 font-semibold marker:content-none">
-              {question}
-              <span
-                aria-hidden="true"
-                className="text-2xl leading-none text-accent transition-transform duration-200 group-open:rotate-45"
-              >
-                +
-              </span>
-            </summary>
-            <p className="faq-answer mt-3 max-w-2xl text-sm leading-relaxed text-muted">{answer}</p>
-          </details>
-        ))}
-      </div>
+        <div className="max-w-3xl divide-y divide-line border-y border-line">
+          {questions.map(({ question, answer }) => (
+            <details key={question} className="group py-4">
+              <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-4 font-semibold marker:content-none">
+                {question}
+                <span
+                  aria-hidden="true"
+                  className="text-2xl leading-none text-accent transition-transform duration-200 group-open:rotate-45"
+                >
+                  +
+                </span>
+              </summary>
+              <p className="faq-answer mt-3 max-w-2xl text-sm leading-relaxed text-muted">{answer}</p>
+            </details>
+          ))}
+        </div>
+      </ScrollReveal>
     </main>
   );
 }

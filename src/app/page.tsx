@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
+import ScrollReveal from "@/components/ScrollReveal";
 import { getCategories, getProducts } from "@/lib/catalog";
 import { jsonLdHtml } from "@/lib/jsonld";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, absoluteUrl } from "@/lib/site";
@@ -38,7 +39,7 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: jsonLdHtml(itemList) }}
       />
       <section className="flex flex-wrap gap-10 px-4 py-14 sm:px-8 lg:px-16 lg:py-24">
-        <div className="flex flex-1 flex-col justify-center gap-7 lg:basis-[52%]">
+        <ScrollReveal className="flex flex-1 flex-col justify-center gap-7 lg:basis-[52%]">
           <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
             Acessórios para treino
           </span>
@@ -68,8 +69,8 @@ export default async function Home() {
               Ver categorias
             </Link>
           </div>
-        </div>
-        <div className="flex flex-1 flex-col lg:basis-[42%]">
+        </ScrollReveal>
+        <ScrollReveal className="flex flex-1 flex-col lg:basis-[42%]" delay={90}>
           <Link
             href="/produto/polia-baixa-tornozeleira-cross-over"
             className="relative flex min-h-[360px] flex-1 items-end overflow-hidden bg-line/40 p-5"
@@ -101,80 +102,86 @@ export default async function Home() {
               <span className="text-xs text-line">Só equipamento</span>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       <section id="categorias" className="px-4 py-12 sm:px-8 lg:px-16">
-        <h2 className="mb-2 font-display text-5xl font-bold uppercase">Categorias</h2>
-        <p className="mb-6 max-w-2xl text-muted">
-          Cada linha resolve uma necessidade do treino. Escolha o que combina com a
-          sua rotina.
-        </p>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category) => {
-            const count = products.filter(
-              (product) => (product.categories?.slug ?? "outros") === category.slug,
-            ).length;
-            return (
-              <Link
-                key={category.id}
-                href={`/produtos?categoria=${encodeURIComponent(category.slug)}`}
-                className="flex flex-col gap-2 bg-panel p-6 transition-colors hover:bg-white"
-              >
-                <span className="font-display text-3xl font-bold uppercase">
-                  {category.name}
-                </span>
-                <span className="text-sm text-muted">{category.description}</span>
-                <span className="mt-auto pt-3 text-xs font-semibold uppercase tracking-wider text-accent">
-                  {count} {count === 1 ? "produto" : "produtos"} →
-                </span>
-              </Link>
-            );
-          })}
-        </div>
+        <ScrollReveal>
+          <h2 className="mb-2 font-display text-5xl font-bold uppercase">Categorias</h2>
+          <p className="mb-6 max-w-2xl text-muted">
+            Cada linha resolve uma necessidade do treino. Escolha o que combina com a
+            sua rotina.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {categories.map((category) => {
+              const count = products.filter(
+                (product) => (product.categories?.slug ?? "outros") === category.slug,
+              ).length;
+              return (
+                <Link
+                  key={category.id}
+                  href={`/produtos?categoria=${encodeURIComponent(category.slug)}`}
+                  className="flex flex-col gap-2 bg-panel p-6 transition-colors hover:bg-white"
+                >
+                  <span className="font-display text-3xl font-bold uppercase">
+                    {category.name}
+                  </span>
+                  <span className="text-sm text-muted">{category.description}</span>
+                  <span className="mt-auto pt-3 text-xs font-semibold uppercase tracking-wider text-accent">
+                    {count} {count === 1 ? "produto" : "produtos"} →
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </ScrollReveal>
       </section>
 
       <section className="px-4 py-12 sm:px-8 lg:px-16">
-        <div className="mb-6 flex items-end justify-between gap-4">
-          <div>
-            <h2 className="font-display text-5xl font-bold uppercase">Destaques</h2>
-            <p className="mt-2 text-sm text-muted">
-              Itens para montar ou ampliar sua rotina de treino.
-            </p>
+        <ScrollReveal>
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <div>
+              <h2 className="font-display text-5xl font-bold uppercase">Destaques</h2>
+              <p className="mt-2 text-sm text-muted">
+                Itens para montar ou ampliar sua rotina de treino.
+              </p>
+            </div>
+            <Link href="/produtos" className="shrink-0 text-sm font-semibold text-accent">
+              Ver todos →
+            </Link>
           </div>
-          <Link href="/produtos" className="shrink-0 text-sm font-semibold text-accent">
-            Ver todos →
-          </Link>
-        </div>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {highlights.map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} />
-          ))}
-        </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {highlights.map((product, index) => (
+              <ProductCard key={product.id} product={product} index={index} />
+            ))}
+          </div>
+        </ScrollReveal>
       </section>
 
       <section id="sobre" className="border-t border-line px-4 py-14 sm:px-8 lg:px-16">
-        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-          Sobre a loja
-        </span>
-        <h2 className="mt-2 font-display text-4xl font-bold uppercase sm:text-5xl">
-          Equipamento para treinar no seu ritmo
-        </h2>
-        <div className="mt-6 grid gap-6 text-sm leading-relaxed text-muted sm:grid-cols-3">
-          <p>
-            <strong className="text-ink">Passos pequenos.</strong> Anilhas de 1 kg e
-            1,25 kg permitem ajustar a carga sem trocar toda a configuração da barra.
-          </p>
-          <p>
-            <strong className="text-ink">Função antes de aparência.</strong> Straps,
-            caneleiras, cinturões e bands ajudam com pegada, estabilidade e apoio nos
-            movimentos.
-          </p>
-          <p>
-            <strong className="text-ink">Sem suplementos.</strong> Aqui você encontra
-            equipamento para treinar — do aquecimento ao último movimento da série.
-          </p>
-        </div>
+        <ScrollReveal>
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
+            Sobre a loja
+          </span>
+          <h2 className="mt-2 font-display text-4xl font-bold uppercase sm:text-5xl">
+            Equipamento para treinar no seu ritmo
+          </h2>
+          <div className="mt-6 grid gap-6 text-sm leading-relaxed text-muted sm:grid-cols-3">
+            <p>
+              <strong className="text-ink">Passos pequenos.</strong> Anilhas de 1 kg e
+              1,25 kg permitem ajustar a carga sem trocar toda a configuração da barra.
+            </p>
+            <p>
+              <strong className="text-ink">Função antes de aparência.</strong> Straps,
+              caneleiras, cinturões e bands ajudam com pegada, estabilidade e apoio nos
+              movimentos.
+            </p>
+            <p>
+              <strong className="text-ink">Sem suplementos.</strong> Aqui você encontra
+              equipamento para treinar — do aquecimento ao último movimento da série.
+            </p>
+          </div>
+        </ScrollReveal>
       </section>
     </main>
   );
