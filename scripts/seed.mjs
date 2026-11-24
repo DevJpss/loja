@@ -28,6 +28,15 @@ const supplierItems = {
   "mordedor-jawzrsize": { id: "23298899051", cost: 1375 },
   "mascara-3d-bloqueio-luz": { id: "20997987038", cost: 2191 },
   "shaker-700ml-mola-peneira": { id: "20333223521", cost: 2149 },
+  "cinturao-musculacao-xd-fitness": { id: "23793646693", cost: 5800 },
+  "par-wrist-wraps-nog": { id: "21274733877", cost: 3879 },
+  "faixa-joelho-compressao": { id: "23092336855", cost: 2952 },
+  "presilhas-olimpicas-lock-jaw": { id: "9872266096", cost: 5490 },
+  "almofada-barra-hip-thrust": { id: "58270848160", cost: 4419 },
+  "step-40x30x10": { id: "58255478803", cost: 4048 },
+  "barra-body-pump-120cm": { id: "22598481980", cost: 3900 },
+  "colete-carga-10kg": { id: "58219617482", cost: 6869 },
+  "kit-halteres-ajustaveis-20kg": { id: "23998684746", cost: 17000 },
 };
 
 // Slugs da vitrine antiga, substituídos pelos anúncios reais. Pedidos históricos

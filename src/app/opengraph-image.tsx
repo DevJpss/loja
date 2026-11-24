@@ -27,7 +27,7 @@ export default function Image() {
           <span style={{ color: "#8fa0ff" }}>backed by evidence.</span>
         </div>
         <div style={{ display: "flex", fontSize: 28, color: "#cacdd3" }}>
-          Acessórios de treino com critério
+          Acessórios e equipamentos de treino
         </div>
       </div>
     ),

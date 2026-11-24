@@ -1,7 +1,7 @@
 export const SITE_NAME = "Evidence Reps";
 export const SITE_TAGLINE = "Every rep backed by evidence.";
 export const SITE_DESCRIPTION =
-  "Acessórios de treino baseados em evidências: caneleiras, anilhas, bands, straps e equipamentos para progredir em passos pequenos. Sem suplementos, sem promessas.";
+  "Caneleiras, anilhas, bands, straps e equipamentos para treinar em casa ou na academia. Sem suplementos: só acessórios para montar sua rotina e evoluir no seu ritmo.";
 
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://evidence-reps-lojha.vercel.app"

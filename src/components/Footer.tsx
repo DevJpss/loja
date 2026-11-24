@@ -9,9 +9,9 @@ export default function Footer() {
             Evidence Reps
           </p>
           <p className="mt-2 max-w-sm text-sm text-line">
-            Equipamentos para quem treina com critério. Cada item do catálogo é
-            escolhido para apoiar a progressão de carga e o treino baseado em
-            evidências.
+            Equipamentos para quem treina de verdade. Cada item do catálogo é
+            escolhido para apoiar sua rotina, do primeiro aquecimento à última
+            série.
           </p>
         </div>
         <div className="text-sm">

@@ -67,6 +67,51 @@ const galleries: Record<string, string[]> = {
     "/products/shaker-700ml-mola-peneira-2.jpg",
     "/products/shaker-700ml-mola-peneira-3.jpg",
   ],
+  "cinturao-musculacao-xd-fitness": [
+    "/products/cinturao-musculacao-xd-fitness-1.jpg",
+    "/products/cinturao-musculacao-xd-fitness-2.jpg",
+    "/products/cinturao-musculacao-xd-fitness-3.jpg",
+  ],
+  "par-wrist-wraps-nog": [
+    "/products/par-wrist-wraps-nog-1.jpg",
+    "/products/par-wrist-wraps-nog-2.jpg",
+    "/products/par-wrist-wraps-nog-3.jpg",
+  ],
+  "faixa-joelho-compressao": [
+    "/products/faixa-joelho-compressao-1.jpg",
+    "/products/faixa-joelho-compressao-2.jpg",
+    "/products/faixa-joelho-compressao-3.jpg",
+  ],
+  "presilhas-olimpicas-lock-jaw": [
+    "/products/presilhas-olimpicas-lock-jaw-1.jpg",
+    "/products/presilhas-olimpicas-lock-jaw-2.jpg",
+    "/products/presilhas-olimpicas-lock-jaw-3.jpg",
+  ],
+  "almofada-barra-hip-thrust": [
+    "/products/almofada-barra-hip-thrust-1.jpg",
+    "/products/almofada-barra-hip-thrust-2.jpg",
+    "/products/almofada-barra-hip-thrust-3.jpg",
+  ],
+  "step-40x30x10": [
+    "/products/step-40x30x10-1.jpg",
+    "/products/step-40x30x10-2.jpg",
+    "/products/step-40x30x10-3.jpg",
+  ],
+  "barra-body-pump-120cm": [
+    "/products/barra-body-pump-120cm-1.jpg",
+    "/products/barra-body-pump-120cm-2.jpg",
+    "/products/barra-body-pump-120cm-3.jpg",
+  ],
+  "colete-carga-10kg": [
+    "/products/colete-carga-10kg-1.jpg",
+    "/products/colete-carga-10kg-2.jpg",
+    "/products/colete-carga-10kg-3.jpg",
+  ],
+  "kit-halteres-ajustaveis-20kg": [
+    "/products/kit-halteres-ajustaveis-20kg-1.jpg",
+    "/products/kit-halteres-ajustaveis-20kg-2.jpg",
+    "/products/kit-halteres-ajustaveis-20kg-3.jpg",
+  ],
 };
 
 export function getProductGallery(product: Product): string[] {

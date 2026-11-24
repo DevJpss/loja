@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/produtos" },
   openGraph: {
     title: `Catálogo | ${SITE_NAME}`,
-    description: "Acessórios de treino escolhidos pela função, não pelo hype.",
+    description:
+      "Caneleiras, anilhas, cinturões e equipamentos para treinar em casa ou na academia.",
     url: "/produtos",
     type: "website",
   },
@@ -33,9 +34,9 @@ export default async function ProductsPage() {
         Produtos
       </h1>
       <p className="mb-10 max-w-2xl text-muted">
-        Filtre por categoria ou busque pelo nome. Cada item é escolhido pela função
-        que cumpre no treino — nada de suplementos ou promessas milagrosas. O
-        pagamento é processado pelo gateway: recebemos apenas os dados de entrega.
+        Filtre por categoria ou busque pelo nome. Aqui você encontra acessórios e
+        equipamentos de treino — nada de suplementos. O pagamento é processado
+        pelo gateway: recebemos apenas os dados de entrega.
       </p>
       <Suspense
         fallback={

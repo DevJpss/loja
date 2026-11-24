@@ -40,7 +40,7 @@ export default async function Home() {
       <section className="flex flex-wrap gap-10 px-4 py-14 sm:px-8 lg:px-16 lg:py-24">
         <div className="flex flex-1 flex-col justify-center gap-7 lg:basis-[52%]">
           <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-            Treino baseado em evidências
+            Acessórios para treino
           </span>
           <h1 className="font-display text-[clamp(3.5rem,9vw,8rem)] font-bold uppercase leading-[0.9] tracking-tight">
             Every rep
@@ -50,8 +50,9 @@ export default async function Home() {
             evidence.
           </h1>
           <p className="max-w-xl text-lg leading-relaxed text-muted">
-            Caneleiras, anilhas, bands, straps e acessórios de treino escolhidos
-            pela função — para progredir com critério, não com promessas.
+            Caneleiras, anilhas, bands, straps e equipamentos para treinar em casa
+            ou na academia. Do aquecimento à última série, o que você precisa para
+            seguir sua rotina.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
@@ -96,8 +97,8 @@ export default async function Home() {
               <span className="text-xs text-line">Progressão de carga</span>
             </div>
             <div className="flex flex-col gap-1 border-l border-white/20 p-4">
-              <span className="font-display text-xl font-semibold uppercase">Sem hype</span>
-              <span className="text-xs text-line">Só o que funciona</span>
+              <span className="font-display text-xl font-semibold uppercase">Sem suplementos</span>
+              <span className="text-xs text-line">Só equipamento</span>
             </div>
           </div>
         </div>
@@ -106,8 +107,8 @@ export default async function Home() {
       <section id="categorias" className="px-4 py-12 sm:px-8 lg:px-16">
         <h2 className="mb-2 font-display text-5xl font-bold uppercase">Categorias</h2>
         <p className="mb-6 max-w-2xl text-muted">
-          Cada linha resolve um problema específico de treino. Escolha pela função, não
-          pelo hype.
+          Cada linha resolve uma necessidade do treino. Escolha o que combina com a
+          sua rotina.
         </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => {
@@ -138,7 +139,7 @@ export default async function Home() {
           <div>
             <h2 className="font-display text-5xl font-bold uppercase">Destaques</h2>
             <p className="mt-2 text-sm text-muted">
-              Itens selecionados para progressão de carga e treino consistente.
+              Itens para montar ou ampliar sua rotina de treino.
             </p>
           </div>
           <Link href="/produtos" className="shrink-0 text-sm font-semibold text-accent">
@@ -154,26 +155,24 @@ export default async function Home() {
 
       <section id="sobre" className="border-t border-line px-4 py-14 sm:px-8 lg:px-16">
         <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-          Como pensamos
+          Sobre a loja
         </span>
         <h2 className="mt-2 font-display text-4xl font-bold uppercase sm:text-5xl">
-          Progresso é repetição com critério
+          Equipamento para treinar no seu ritmo
         </h2>
         <div className="mt-6 grid gap-6 text-sm leading-relaxed text-muted sm:grid-cols-3">
           <p>
             <strong className="text-ink">Passos pequenos.</strong> Anilhas de 1 kg e
-            1,25 kg permitem ajustar a carga sem trocar toda a configuração da barra,
-            apoiando a progressão gradual sem mudar a técnica.
+            1,25 kg permitem ajustar a carga sem trocar toda a configuração da barra.
           </p>
           <p>
             <strong className="text-ink">Função antes de aparência.</strong> Straps,
-            caneleiras e bands são escolhidos pelo problema que resolvem — pegada,
-            estabilidade ou assistência no movimento.
+            caneleiras, cinturões e bands ajudam com pegada, estabilidade e apoio nos
+            movimentos.
           </p>
           <p>
-            <strong className="text-ink">Sem atalhos.</strong> Não vendemos suplementos
-            nem prometemos resultados terapêuticos. O equipamento é ferramenta, não
-            substituto de treino consistente.
+            <strong className="text-ink">Sem suplementos.</strong> Aqui você encontra
+            equipamento para treinar — do aquecimento ao último movimento da série.
           </p>
         </div>
       </section>

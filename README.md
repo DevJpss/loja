@@ -1,8 +1,8 @@
-# Evidence Reps — Fases 1 e 3
+# Evidence Reps — Fases 1, 3 e 4
 
-Agregador de acessórios de treino baseados em evidências. Catálogo, detalhe de
-produto, painel administrativo e venda com checkout próprio (carrinho, Pix/cartão
-e acompanhamento de pedido). O plano completo está em `../PLANO-TECNICO.md`.
+Agregador de acessórios e equipamentos de treino. Catálogo, detalhe de produto,
+painel administrativo e venda com checkout próprio (carrinho, Pix/cartão e
+acompanhamento de pedido). O plano completo está em `../PLANO-TECNICO.md`.
 
 **Modelo de revenda:** o cliente paga no site; o operador compra no fornecedor com
 seu próprio pagamento e envia direto ao cliente. Nunca pedimos CPF nem dados de
@@ -26,15 +26,17 @@ npm run dev
 
 Abra http://localhost:3000.
 
-Sem variáveis de ambiente, o site usa um **catálogo local** com 13 produtos e 6
+Sem variáveis de ambiente, o site usa um **catálogo local** com 22 produtos e 8
 categorias. Com Supabase configurado, catálogo, variantes e pedidos vêm do banco.
 
-Os 13 produtos são **reais**: cada um corresponde a um anúncio verificado no
+Os 22 produtos são **reais**: cada um corresponde a um anúncio verificado no
 browser logado da Shopee, com título, especificações, custo e fotos locais em
-`public/products/` (34 JPEGs, 1 a 5 por produto). A categoria `microloading`
-mantém o slug, mas se chama **Anilhas e Carga** — as anilhas disponíveis são de
-1 kg e 1,25 kg, não microcargas de 0,25 kg. As fotos são dos anúncios e o uso foi
-autorizado pelo operador; guarde o comprovante da autorização.
+`public/products/` (66 JPEGs, 1 a 5 por produto). As categorias novas são
+**Suporte e Proteção** (cinturão, wrist wraps, faixa de joelho, almofada) e
+**Equipamentos de Treino** (presilhas, barra, step, colete, halteres). A categoria
+`microloading` mantém o slug, mas se chama **Anilhas e Carga** — as anilhas
+disponíveis são de 1 kg e 1,25 kg, não microcargas de 0,25 kg. As fotos são dos
+anúncios e o uso foi autorizado pelo operador; guarde o comprovante da autorização.
 
 O link do fornecedor (`source_url`) fica apenas no banco e aparece no painel
 admin (fila de compra e `/admin/fornecedor`); `publicProduct()` o remove antes de
@@ -57,7 +59,7 @@ insert into admins (user_id)
 select id from auth.users where email = 'voce@exemplo.com';
 ```
 
-5. Popular o catálogo com os 13 produtos reais, semear os 13 itens monitorados e remover slugs antigos:
+5. Popular o catálogo com os 22 produtos reais, semear os 22 itens monitorados e remover slugs antigos:
 
 ```bash
 node --env-file=.env.local scripts/seed.mjs
@@ -250,11 +252,11 @@ npm run build
 ESLint) e roda a suíte `node:test` sem dependências extras: pedidos/taxas, filtros
 e CSV do painel, URL canônica, URLs de parceiro e escape de JSON-LD.
 
-Build de referência: 34 páginas, `/api/webhooks/pagamento` e
+Build de referência: 43 páginas, `/api/webhooks/pagamento` e
 `/api/cron/supplier-check` como rotas dinâmicas.
 
 ## Próximas fases
 
-- Fase 2: import CSV, atualização de preços via Edge Function, blog science based
+- Fase 2: import CSV, atualização de preços via Edge Function, blog sobre treino
 - Fase 4: fila de compra, custo/margem, rastreio e notificações (e-mail/WhatsApp)
 - Fase 5/6: analytics, afiliados, automação/logística e integrações com ERP
