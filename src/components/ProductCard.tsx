@@ -11,7 +11,13 @@ const stockLabels = {
   available: null,
 } as const;
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({
+  product,
+  index = 0,
+}: {
+  product: Product;
+  index?: number;
+}) {
   const compare = product.compare_at_price_cents;
   const discount = compare && compare > product.price_cents
     ? Math.round(((compare - product.price_cents) / compare) * 100)
@@ -19,7 +25,10 @@ export default function ProductCard({ product }: { product: Product }) {
   const stockLabel = stockLabels[product.stock_status];
 
   return (
-    <article className="group flex flex-col border border-line/60 bg-panel transition-colors hover:border-accent">
+    <article
+      style={{ animationDelay: `${Math.min(index, 11) * 45}ms` }}
+      className="er-fade-up group flex flex-col border border-line/60 bg-panel transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-[0_18px_40px_-24px_rgba(18,20,24,0.55)] focus-within:border-accent"
+    >
       <div className="relative aspect-[4/3] overflow-hidden bg-line/30">
         <Link
           href={`/produto/${product.slug}`}
@@ -32,7 +41,7 @@ export default function ProductCard({ product }: { product: Product }) {
             alt={product.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
             unoptimized
           />
         </Link>
@@ -55,7 +64,9 @@ export default function ProductCard({ product }: { product: Product }) {
           <h3 className="font-display text-2xl font-bold uppercase leading-tight">
             {product.name}
           </h3>
-          <span className="mt-1 inline-block text-xs font-semibold text-accent">Ver detalhes →</span>
+          <span className="mt-1 inline-block text-xs font-semibold text-accent transition-transform duration-200 group-hover:translate-x-1">
+            Ver detalhes →
+          </span>
         </Link>
         <p className="line-clamp-2 text-sm text-muted">{product.description}</p>
         <div className="flex items-end justify-between gap-2 pt-3">

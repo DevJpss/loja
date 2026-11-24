@@ -44,6 +44,8 @@ export default function AddToCartButton({ product, variants = [], compact }: Pro
     setAdded(true);
   }
 
+  const sizeClass = compact ? "px-4 text-sm" : "px-7";
+
   return (
     <div className={compact ? "mt-auto" : ""}>
       {variants.length ? (
@@ -74,15 +76,19 @@ export default function AddToCartButton({ product, variants = [], compact }: Pro
         onClick={handleClick}
         disabled={!available}
         aria-label={`Adicionar ${product.name} ao carrinho`}
-        className={`inline-flex min-h-11 w-full items-center justify-center font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 ${compact ? "bg-ink px-4 text-sm" : "bg-accent px-7"}`}
+        className={`pressable inline-flex min-h-11 w-full items-center justify-center font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 ${sizeClass} ${
+          added ? "bg-emerald-700" : compact ? "bg-ink" : "bg-accent"
+        }`}
       >
-        {!available
-          ? "Esgotado"
-          : added
-            ? "Adicionado ✓"
-            : compact
-              ? "Adicionar"
-              : "Adicionar ao carrinho"}
+        <span key={added ? "added" : "idle"} className={added ? "er-fade-up" : ""}>
+          {!available
+            ? "Esgotado"
+            : added
+              ? "Adicionado ✓"
+              : compact
+                ? "Adicionar"
+                : "Adicionar ao carrinho"}
+        </span>
       </button>
       <span className="sr-only" role="status" aria-live="polite">
         {added ? `${product.name} adicionado ao carrinho.` : ""}

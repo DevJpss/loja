@@ -87,9 +87,14 @@ export default function FaqPage() {
           <details key={question} className="group py-4">
             <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-4 font-semibold marker:content-none">
               {question}
-              <span aria-hidden="true" className="text-accent group-open:rotate-45">+</span>
+              <span
+                aria-hidden="true"
+                className="text-2xl leading-none text-accent transition-transform duration-200 group-open:rotate-45"
+              >
+                +
+              </span>
             </summary>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">{answer}</p>
+            <p className="faq-answer mt-3 max-w-2xl text-sm leading-relaxed text-muted">{answer}</p>
           </details>
         ))}
       </div>

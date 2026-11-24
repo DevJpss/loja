@@ -147,8 +147,8 @@ export default async function Home() {
           </Link>
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {highlights.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {highlights.map((product, index) => (
+            <ProductCard key={product.id} product={product} index={index} />
           ))}
         </div>
       </section>

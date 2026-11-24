@@ -274,6 +274,25 @@ chama `updateTag("products")` após criar, editar ou excluir produtos e
   selo "Compra verificada" e o `aggregateRating`. Os dados temporários foram
   removidos depois do teste.
 
+## Interface e interações
+
+- Header fixo com leve desfoque, links com sublinhado animado e botões com
+  feedback de pressão. Âncoras têm `scroll-margin-top` para não ficarem atrás do
+  header.
+- Dropdown de **Categorias** no desktop e menu hambúrguer no mobile, com
+  fechamento por clique fora ou `Esc` e retorno de foco ao botão. As categorias
+  vêm de `getCategories()` (cache com `cacheTag("categories")`).
+- Mini-carrinho no header mostra itens, quantidade, subtotal e atalhos para o
+  checkout; o contador dá um "pulo" quando um item é adicionado.
+- Cards entram com fade escalonado, sobem no hover e têm seta que desliza; a
+  galeria do PDP faz fade ao trocar de foto.
+- FAQ usa `<details>` com resposta animada só na abertura; o botão de adicionar
+  fica verde e mostra "Adicionado ✓" por instantes.
+- `CatalogGrid` usa `?categoria=` como fonte da verdade, então os links dos
+  menus filtram o catálogo mesmo em navegação client-side.
+- Tudo sem novas dependências e com `prefers-reduced-motion: reduce`
+  neutralizando animações e transições.
+
 ## Validação
 
 ```bash
@@ -301,6 +320,8 @@ Fora de escopo: domínio próprio e Fase 0 (CNPJ/contador/notas/páginas legais)
 - Onda 2 — confiança e conversão: FAQ, breadcrumbs, `lastmod` no sitemap,
   compatibilidade no PDP e avaliações verificadas implementados. Contato/trocas
   ficaram adiados (o banco não tem WhatsApp/e-mail de contato cadastrados).
+- Onda UX — interface e interações: implementada (header fixo, dropdowns, menu
+  mobile, mini-carrinho, microanimações e filtro sincronizado com a URL).
 - Onda 3 — operação: backups, Sentry, e-mails transacionais, rate limiting e
   migração para `sb_publishable_`/`sb_secret_` (dependem de orçamento).
 - Onda 4 — crescimento: analytics com consentimento, UTM, cupom, recuperação de

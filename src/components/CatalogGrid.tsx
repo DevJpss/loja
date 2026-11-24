@@ -41,10 +41,12 @@ export default function CatalogGrid({ products, categories }: Props) {
     return [...known, ...extras];
   }, [products, categories]);
 
-  const [category, setCategory] = useState(() => {
-    const initial = searchParams.get("categoria") ?? "all";
-    return options.some((option) => option.slug === initial) ? initial : "all";
-  });
+  // A URL é a fonte da verdade do filtro: links do header/home e os botões do
+  // catálogo usam a mesma query string, sem estado local divergente.
+  const categoriaParam = searchParams.get("categoria") ?? "all";
+  const category = options.some((option) => option.slug === categoriaParam)
+    ? categoriaParam
+    : "all";
   const [query, setQuery] = useState("");
 
   const visible = useMemo(() => {
@@ -67,7 +69,6 @@ export default function CatalogGrid({ products, categories }: Props) {
   const filtered = category !== "all" || query.trim().length > 0;
 
   function selectCategory(slug: string) {
-    setCategory(slug);
     const url = new URL(window.location.href);
     if (slug === "all") url.searchParams.delete("categoria");
     else url.searchParams.set("categoria", slug);
@@ -75,7 +76,6 @@ export default function CatalogGrid({ products, categories }: Props) {
   }
 
   function clearFilters() {
-    setCategory("all");
     setQuery("");
     const url = new URL(window.location.href);
     url.searchParams.delete("categoria");
@@ -139,8 +139,8 @@ export default function CatalogGrid({ products, categories }: Props) {
 
       {visible.length ? (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {visible.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {visible.map((product, index) => (
+            <ProductCard key={product.id} product={product} index={index} />
           ))}
         </div>
       ) : (

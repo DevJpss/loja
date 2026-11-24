@@ -22,7 +22,7 @@ export default function ProductGallery({
           alt={`${name} — foto ${active + 1}`}
           fill
           sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-contain p-6"
+          className="er-fade-up object-contain p-6"
           unoptimized
           priority
         />
@@ -40,7 +40,7 @@ export default function ProductGallery({
               onClick={() => setActive(index)}
               aria-label={`Ver foto ${index + 1} de ${name}`}
               aria-pressed={active === index}
-              className={`relative h-20 w-20 overflow-hidden border-2 bg-line/30 transition-colors ${
+              className={`pressable relative h-20 w-20 overflow-hidden border-2 bg-line/30 transition-[border-color,transform] duration-200 hover:scale-105 ${
                 active === index ? "border-accent" : "border-transparent hover:border-line"
               }`}
             >
