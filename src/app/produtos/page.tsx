@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import CatalogGrid from "@/components/CatalogGrid";
 import { getCategories, getProducts } from "@/lib/catalog";
+import { publicProduct } from "@/lib/public-product";
 import { SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -43,7 +44,7 @@ export default async function ProductsPage() {
           </p>
         }
       >
-        <CatalogGrid products={products} categories={categories} />
+        <CatalogGrid products={products.map(publicProduct)} categories={categories} />
       </Suspense>
     </main>
   );

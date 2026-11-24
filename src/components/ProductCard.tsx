@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import AddToCartButton from "./AddToCartButton";
 import { formatPrice } from "@/lib/format";
+import { publicProduct } from "@/lib/public-product";
 import type { Product } from "@/lib/types";
 
 const stockLabels = {
@@ -65,7 +66,7 @@ export default function ProductCard({ product }: { product: Product }) {
             ) : null}
           </div>
         </div>
-        <AddToCartButton product={product} compact />
+        <AddToCartButton product={publicProduct(product)} compact />
       </div>
     </article>
   );

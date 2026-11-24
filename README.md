@@ -26,8 +26,14 @@ npm run dev
 
 Abra http://localhost:3000.
 
-Sem variáveis de ambiente, o site usa um **catálogo de demonstração** com 12
+Sem variáveis de ambiente, o site usa um **catálogo de demonstração** com 13
 produtos. Com Supabase configurado, catálogo, variantes e pedidos vêm do banco.
+
+O catálogo demo inclui um produto real — o **par de polia baixa para tornozeleira
+(cross over)** — com ficha técnica e fotos locais em `public/products/`. O link do
+fornecedor fica apenas no banco e aparece no painel admin (fila de compra); nunca
+é enviado ao navegador do cliente. As fotos são do anúncio do fornecedor: confirme
+com ele o direito de uso antes de publicar.
 
 ## Configurar Supabase
 
@@ -46,7 +52,7 @@ insert into admins (user_id)
 select id from auth.users where email = 'voce@exemplo.com';
 ```
 
-5. Popular o catálogo com os 12 produtos de demonstração:
+5. Popular o catálogo com os 13 produtos de demonstração:
 
 ```bash
 node --env-file=.env.local scripts/seed.mjs

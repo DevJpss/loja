@@ -70,19 +70,23 @@ export default async function Home() {
           </div>
         </div>
         <div className="flex flex-1 flex-col lg:basis-[42%]">
-          <div className="relative flex min-h-[360px] flex-1 items-end overflow-hidden bg-line/40 p-5">
+          <Link
+            href="/produto/polia-baixa-tornozeleira-cross-over"
+            className="relative flex min-h-[360px] flex-1 items-end overflow-hidden bg-line/40 p-5"
+          >
             <Image
-              src="/products/gear.svg"
-              alt="Acessórios de treino Evidence Reps"
+              src="/products/polia-baixa-tornozeleira-1.jpg"
+              alt="Par de tornozeleiras de polia baixa para cross over"
               fill
               sizes="(max-width: 1024px) 100vw, 42vw"
-              className="object-contain p-8"
+              className="object-contain p-8 transition-transform duration-300 hover:scale-105"
               unoptimized
+              priority
             />
             <span className="relative bg-panel px-3 py-2 text-xs font-semibold uppercase tracking-widest">
-              Gear with a reason
+              Polia baixa · par →
             </span>
-          </div>
+          </Link>
           <div className="grid grid-cols-3 bg-ink text-white">
             <div className="flex flex-col gap-1 p-4">
               <span className="font-display text-xl font-semibold uppercase">0,25 kg</span>

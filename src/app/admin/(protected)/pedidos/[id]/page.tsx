@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { z } from "zod";
 import OrderActions from "@/components/OrderActions";
+import CopySupplierLink from "@/components/CopySupplierLink";
 import { formatPrice } from "@/lib/format";
 import {
   buildCustomerNotification,
@@ -12,6 +13,7 @@ import {
   settingsToNumberMap,
   type PaymentMethod,
 } from "@/lib/orders";
+import { isPublicPartnerUrl } from "@/lib/site";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const instant = false;
@@ -76,6 +78,10 @@ export default async function AdminOrderDetailPage({ params }: Props) {
     phone: customer?.phone ?? null,
     whatsappNumber: getWhatsappNumber(settingRows),
   });
+
+  const supplierLinks = (order.order_items ?? [])
+    .map((item) => item.source_url_snapshot)
+    .filter((url): url is string => isPublicPartnerUrl(url));
 
   const info = "text-sm text-muted";
   const strong = "font-semibold text-ink";
@@ -190,14 +196,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
                 <div>
                   <p className="font-semibold">{item.qty}× {item.name_snapshot}</p>
                   {item.source_url_snapshot ? (
-                    <a
-                      href={item.source_url_snapshot}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-xs text-accent hover:underline"
-                    >
-                      Ver no fornecedor ↗
-                    </a>
+                    <span className="text-xs text-muted">Link do fornecedor disponível abaixo</span>
                   ) : null}
                 </div>
                 <span className="font-semibold">{formatPrice(item.price_cents * item.qty)}</span>
@@ -225,6 +224,24 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      {supplierLinks.length ? (
+        <div className={`${panel} mt-6 border-accent`}>
+          <h3 className="mb-1 font-display text-lg font-bold uppercase">Fila de compra — uso interno</h3>
+          <p className={`mb-3 ${info}`}>
+            Compre no fornecedor com <strong className={strong}>recurso próprio</strong> e envie
+            direto ao cliente. Nunca use CPF ou cartão do cliente neste site.
+          </p>
+          <div className="divide-y divide-line">
+            {supplierLinks.map((url) => (
+              <div key={url} className="py-2">
+                <p className="break-all text-xs text-muted">{url}</p>
+                <CopySupplierLink url={url} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <div className="mt-6">
         <h3 className="mb-3 font-display text-2xl font-bold uppercase">Ações do pedido</h3>

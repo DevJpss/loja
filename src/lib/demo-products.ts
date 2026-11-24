@@ -6,11 +6,32 @@ export const demoCategories: Category[] = [
   { id: "c3", name: "Bands", slug: "bands", description: "Minis e longas, de tecido ou látex." },
   { id: "c4", name: "Straps", slug: "straps", description: "Retos e em 8, para segurar a barra." },
   { id: "c5", name: "Acessórios", slug: "acessorios", description: "Mordedor, venda, shaker e toalha." },
+  { id: "c6", name: "Polia e Cross Over", slug: "polia-cross-over", description: "Tornozeleiras e acessórios para polia baixa e cross over." },
 ];
 
 const image = (name: string) => `/products/${name}.svg`;
 
 export const demoProducts: Product[] = [
+  {
+    id: "d0", category_id: "c6", name: "Par Polia Baixa para Tornozeleira — Cross Over", slug: "polia-baixa-tornozeleira-cross-over",
+    description: "Par de tornozeleiras de polia baixa para cross over, com argola de aço cromado para engate na polia. Estrutura em nylon resistente, EVA de 6 mm revestido em courino de 2,4 mm com reforço interno, acolchoamento confortável no calcanhar e costuras reforçadas. Cada unidade mede cerca de 6 × 15 cm e pesa aproximadamente 60 g. Vendido em par (2 unidades), na cor preta. Indicado para cross over, polia baixa, treino funcional, estúdios e clínicas de fisioterapia. Limpe com pano seco e proteja do sol. Garantia de 3 meses contra defeitos de fabricação.",
+    specs: {
+      Marca: "Fronture Fitness",
+      Conteúdo: "Par com 2 unidades",
+      Material: "EVA de 6 mm revestido em courino de 2,4 mm com reforço interno",
+      Argola: "Aço cromado",
+      Medidas: "6 cm × 15 cm (C × L), aproximadamente",
+      Peso: "Aproximadamente 60 g por unidade",
+      Cor: "Preto",
+      Uso: "Cross over, polia baixa, treino funcional e fisioterapia",
+      Cuidados: "Limpar com pano seco e proteger do sol",
+      Garantia: "3 meses contra defeitos de fabricação",
+    },
+    image_url: "/products/polia-baixa-tornozeleira-1.jpg",
+    price_cents: 6990, compare_at_price_cents: null,
+    source_url: "https://shopee.com.br/PAR-Polia-Baixa-Tornozeleira-Cross-Over-Puxador-Gl%C3%BAteo-Academia-Muscula%C3%A7%C3%A3o-Funcional-Fitness-Puxador-Coice-i.329230503.23832623167",
+    stock_status: "available", active: true, categories: { name: "Polia e Cross Over", slug: "polia-cross-over" },
+  },
   {
     id: "d1", category_id: "c1", name: "Caneleira de tornozelo com polia", slug: "caneleira-tornozelo-polia",
     description: "Caneleira ajustável com polia para treino de pernas. Fixação firme e acolchoamento confortável.",
