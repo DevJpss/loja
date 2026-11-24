@@ -10,6 +10,11 @@ import {
 } from "@/lib/payments/mercadopago";
 import type { ActionState } from "@/lib/types";
 import { shippingCentsForState } from "@/lib/shipping";
+import {
+  parseSupplierMonitor,
+  priceFromMonitor,
+  supplierUnavailable,
+} from "@/lib/supplier-monitor";
 
 const checkoutSchema = z.object({
   full_name: z.string().trim().min(3, "Informe seu nome completo"),
@@ -74,7 +79,12 @@ export async function checkout(
   if (settingsError) return { ok: false, message: settingsError.message };
 
   const settings = new Map(
-    (settingsData ?? []).map((row) => [row.key, Number(row.value)]),
+    (settingsData ?? [])
+      .filter((row) => row.key !== "supplier_monitor")
+      .map((row) => [row.key, Number(row.value)]),
+  );
+  const supplierMonitor = parseSupplierMonitor(
+    (settingsData ?? []).find((row) => row.key === "supplier_monitor")?.value,
   );
   const threshold = settings.get("free_shipping_threshold_cents") ?? 29900;
   const regionalShipping = shippingCentsForState(parsed.data.state);
@@ -110,6 +120,9 @@ export async function checkout(
     if (!product || !product.active || product.stock_status === "out_of_stock") {
       return { ok: false, message: "Um produto do carrinho não está mais disponível." };
     }
+    if (supplierUnavailable(supplierMonitor, product.slug)) {
+      return { ok: false, message: "Um produto do carrinho não está disponível no fornecedor." };
+    }
 
     const variant = item.variant_id
       ? (product.product_variants ?? []).find((entry) => entry.id === item.variant_id)
@@ -124,7 +137,10 @@ export async function checkout(
       name_snapshot: variant ? `${product.name} — ${variant.name}` : product.name,
       image_snapshot: product.image_url,
       source_url_snapshot: product.source_url,
-      price_cents: variant?.price_cents ?? product.price_cents,
+      price_cents: priceFromMonitor(
+        { slug: product.slug, price_cents: variant?.price_cents ?? product.price_cents },
+        supplierMonitor,
+      ),
       qty: item.qty,
     });
   }

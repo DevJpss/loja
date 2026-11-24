@@ -6,6 +6,7 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { parseProductForm } from "@/lib/validation";
+import { applyManualSupplierCheck } from "@/lib/supplier-monitor";
 import type { ActionState } from "@/lib/types";
 
 function firstIssue(error: z.ZodError): string {
@@ -90,4 +91,32 @@ export async function deleteProduct(formData: FormData): Promise<void> {
 
   updateTag("products");
   revalidatePath("/admin/produtos");
+}
+
+export async function updateSupplierMonitorEntry(formData: FormData): Promise<void> {
+  await requireAdmin();
+
+  const slug = String(formData.get("slug") ?? "");
+  const price = Number(formData.get("supplier_price"));
+  const availability = String(formData.get("availability"));
+  const priceCents = Number.isFinite(price) ? Math.round(price * 100) : -1;
+
+  if (
+    !slug ||
+    priceCents < 0 ||
+    (availability !== "available" && availability !== "unavailable")
+  ) {
+    redirect("/admin/fornecedor?check=erro");
+  }
+
+  const result = await applyManualSupplierCheck({
+    slug,
+    priceCents,
+    available: availability === "available",
+  });
+
+  updateTag("products");
+  revalidatePath("/admin/produtos");
+  revalidatePath("/admin/fornecedor");
+  redirect(`/admin/fornecedor?check=${result.ok ? "ok" : "erro"}`);
 }

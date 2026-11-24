@@ -157,6 +157,41 @@ Descontando o custo, o frete real e a taxa do gateway, o lucro estimado é de
 R$ 22,96 no Pix e R$ 21,17 no cartão no Sudeste, ficando entre R$ 19,94 e
 R$ 24,78 em todas as regiões.
 
+### Checagem diária do fornecedor
+
+O programa de afiliados da Shopee exige perfil de influenciador e o Open
+Platform não resolve sem CNPJ (o perfil *Seller* só serve para lojas próprias e
+o de *Third-party Partner* exige documento). Por isso, a fonte autorizada hoje é
+o próprio operador: em `/admin/fornecedor`, informe uma vez por dia o **custo**
+visto no anúncio e se ele está **disponível**. O site aplica:
+
+- **Preço:** `custo do fornecedor + R$ 23,58`, arredondado para cima até
+  terminar em `,90`. Com custo de R$ 26,32 o preço continua R$ 49,90.
+- **Disponibilidade:** se você marcar indisponível, o produto fica
+  `out_of_stock` e o checkout bloqueia a venda mesmo que alguém tenha mudado o
+  status manualmente. Ao marcar disponível novamente, o status anterior é
+  restaurado; um produto esgotado manualmente não é reativado.
+- **Auditoria:** cada registro fica no histórico (30 entradas) com data, custo,
+  preço antes/depois e origem `manual`.
+
+O estado vive na chave `supplier_monitor` da tabela `settings`; nenhuma nova
+coluna ou migration é necessária. O preço usado no checkout é recalculado no
+servidor a partir desse custo, não confiado ao navegador.
+
+Quando existir uma fonte autorizada de verdade, o job pronto em
+`/api/cron/supplier-check` pode ser reativado: basta configurar as variáveis
+abaixo e adicionar o `cron` ao `vercel.json`. O adaptador isolado em
+`src/lib/supplier-quote.ts` aceita `price_cents`/`price` e
+`available`/`in_stock`/`status`; ele nunca usa cookies de sessão.
+
+| Variável | Uso futuro |
+|---|---|
+| `CRON_SECRET` | Vercel envia `Authorization: Bearer <valor>`; sem ele a rota responde 503 |
+| `SUPPLIER_QUOTE_URL` | Endpoint HTTPS da fonte autorizada; sem ele o job não roda |
+| `SUPPLIER_QUOTE_TOKEN` | Bearer token da fonte, se exigido |
+| `SUPPLIER_QUOTE_ITEM_PARAM` | Nome do parâmetro de item (padrão `item_id`) |
+| `SUPPLIER_QUOTE_TIMEOUT_MS` | Timeout por consulta em ms (padrão `10000`) |
+
 As notificações são links gerados no painel (`mailto:` e `wa.me`), sem serviço
 pago. O cliente vê o status e o rastreio em `/pedido/[code]`.
 
@@ -174,7 +209,9 @@ pago. O cliente vê o status e o rastreio em `/pedido/[code]`.
 | `/admin/produtos` | Lista, edição e exclusão de produtos |
 | `/admin/pedidos` | Fila de pedidos com custo e margem |
 | `/admin/pedidos/[id]` | Detalhe, ações de compra/envio e notificações |
+| `/admin/fornecedor` | Custo/disponibilidade do fornecedor e histórico (checagem manual) |
 | `/api/webhooks/pagamento` | Webhook do Mercado Pago |
+| `/api/cron/supplier-check` | Job futuro, protegido por `CRON_SECRET`; desativado sem fonte autorizada |
 | `/sitemap.xml`, `/robots.txt` | SEO básico |
 
 ## Cache
@@ -207,7 +244,8 @@ npm run build
 ESLint) e roda a suíte `node:test` sem dependências extras: pedidos/taxas, filtros
 e CSV do painel, URL canônica, URLs de parceiro e escape de JSON-LD.
 
-Build de referência: 31 páginas, `/api/webhooks/pagamento` como rota dinâmica.
+Build de referência: 34 páginas, `/api/webhooks/pagamento` e
+`/api/cron/supplier-check` como rotas dinâmicas.
 
 ## Próximas fases
 

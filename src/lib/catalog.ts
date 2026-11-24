@@ -2,6 +2,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { demoCategories, demoProducts } from "./demo-products";
 import { hasPublicConfig } from "./supabase/client";
 import { createAdminClient } from "./supabase/admin";
+import { priceFromMonitor, readSupplierMonitor } from "./supplier-monitor";
 import type { Category, Product } from "./types";
 
 const PRODUCT_FIELDS =
@@ -15,13 +16,20 @@ export async function getProducts(): Promise<Product[]> {
   if (!hasPublicConfig()) return demoProducts;
 
   try {
-    const { data, error } = await createAdminClient()
-      .from("products")
-      .select(PRODUCT_FIELDS)
-      .eq("active", true)
-      .order("name", { ascending: true });
+    const admin = createAdminClient();
+    const [{ data, error }, monitor] = await Promise.all([
+      admin
+        .from("products")
+        .select(PRODUCT_FIELDS)
+        .eq("active", true)
+        .order("name", { ascending: true }),
+      readSupplierMonitor(admin),
+    ]);
     if (error || !data) return demoProducts;
-    return data as unknown as Product[];
+    return (data as unknown as Product[]).map((product) => ({
+      ...product,
+      price_cents: priceFromMonitor(product, monitor),
+    }));
   } catch {
     return demoProducts;
   }
@@ -37,14 +45,19 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   }
 
   try {
-    const { data, error } = await createAdminClient()
-      .from("products")
-      .select(PRODUCT_FIELDS)
-      .eq("slug", slug)
-      .eq("active", true)
-      .maybeSingle();
+    const admin = createAdminClient();
+    const [{ data, error }, monitor] = await Promise.all([
+      admin
+        .from("products")
+        .select(PRODUCT_FIELDS)
+        .eq("slug", slug)
+        .eq("active", true)
+        .maybeSingle(),
+      readSupplierMonitor(admin),
+    ]);
     if (error || !data) return null;
-    return data as unknown as Product;
+    const product = data as unknown as Product;
+    return { ...product, price_cents: priceFromMonitor(product, monitor) };
   } catch {
     return null;
   }

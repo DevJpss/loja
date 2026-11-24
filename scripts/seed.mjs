@@ -50,6 +50,35 @@ async function run() {
 
   if (productsError) throw productsError;
 
+  const { data: monitorData, error: monitorReadError } = await supabase
+    .from("settings")
+    .select("value")
+    .eq("key", "supplier_monitor")
+    .maybeSingle();
+  if (monitorReadError) throw monitorReadError;
+
+  const existingMonitor =
+    monitorData?.value && typeof monitorData.value === "object" && monitorData.value.products
+      ? monitorData.value
+      : { products: {} };
+  const monitoredSlug = "polia-baixa-tornozeleira-cross-over";
+  existingMonitor.products[monitoredSlug] = {
+    ...(existingMonitor.products[monitoredSlug] ?? {}),
+    supplier_item_id: "23832623167",
+    price_auto_adjust: true,
+    supplier_price_cents: 2632,
+    supplier_available: true,
+    last_error: null,
+  };
+
+  const { error: monitorError } = await supabase
+    .from("settings")
+    .upsert(
+      { key: "supplier_monitor", value: existingMonitor },
+      { onConflict: "key" },
+    );
+  if (monitorError) throw monitorError;
+
   const { data: storedProducts, error: selectError } = await supabase
     .from("products")
     .select("id,slug");

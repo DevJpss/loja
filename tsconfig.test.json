@@ -15,6 +15,7 @@
     "src/lib/orders.ts",
     "src/lib/reports.ts",
     "src/lib/site.ts",
+    "src/lib/supplier-pricing.ts",
     "tests/**/*.ts"
   ],
   "exclude": ["node_modules"]
