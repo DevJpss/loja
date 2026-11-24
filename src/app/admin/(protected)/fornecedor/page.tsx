@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { formatPrice } from "@/lib/format";
 import { getAdminProducts } from "@/lib/catalog";
 import { readSupplierMonitor } from "@/lib/supplier-monitor";
@@ -18,6 +19,10 @@ type Props = {
 };
 
 export default async function AdminSupplierPage({ searchParams }: Props) {
+  // Esta página lê configurações protegidas do fornecedor: nunca deve ser
+  // prerenderizada (o build roda sem SUPABASE_SERVICE_ROLE_KEY).
+  await connection();
+
   const [query, monitor, products] = await Promise.all([
     searchParams,
     readSupplierMonitor(),

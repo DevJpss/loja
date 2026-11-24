@@ -269,7 +269,9 @@ e CSV do painel, URL canônica, URLs de parceiro, escape de JSON-LD, máscara de
 PII, assinatura HMAC do webhook e schemas de produto/notificação.
 
 Build de referência: 44 páginas, com `/api/webhooks/pagamento`, `/api/health` e
-`/api/cron/supplier-check` como rotas dinâmicas.
+`/api/cron/supplier-check` como rotas dinâmicas. O build também passa sem
+`.env.local` (como na CI): páginas protegidas que leem o banco marcam
+renderização por requisição com `connection()` em vez de prerenderizar.
 
 ## Próximas fases
 
