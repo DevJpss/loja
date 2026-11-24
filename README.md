@@ -267,9 +267,12 @@ chama `updateTag("products")` após criar, editar ou excluir produtos e
 - A vitrine pública mostra nome e inicial do sobrenome, sem e-mail, telefone ou
   endereço. A tabela `reviews` tem RLS e não tem policies públicas: todo acesso
   é feito no servidor com `service_role`.
-- `supabase/migrations/0002_reviews.sql` precisa ser executada no SQL Editor do
-  Supabase antes de usar avaliações. Até lá, as consultas retornam lista vazia e
-  o envio falha com mensagem genérica.
+- `supabase/migrations/0002_reviews.sql` já foi executada no SQL Editor do
+  Supabase. O fluxo foi validado em produção com um pedido temporário: envio no
+  rastreio ficou `pending`, a aprovação em `/admin/avaliacoes` preencheu
+  `approved_at`, e o PDP passou a mostrar a avaliação, o autor `Cliente T.`, o
+  selo "Compra verificada" e o `aggregateRating`. Os dados temporários foram
+  removidos depois do teste.
 
 ## Validação
 
