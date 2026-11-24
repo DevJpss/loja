@@ -62,7 +62,6 @@ export default function CheckoutForm() {
   return (
     <form action={formAction} className="grid gap-8 lg:grid-cols-[1fr_320px]">
       <input type="hidden" name="items" value={payload} />
-      <input type="hidden" name="payment_method" value={method} />
 
       <div className="grid gap-6">
         <section className="grid gap-4 border border-line bg-white p-6">
@@ -137,22 +136,42 @@ export default function CheckoutForm() {
           </div>
         </section>
 
-        <section className="grid gap-3 border border-line bg-white p-6">
-          <h2 className="font-display text-2xl font-bold uppercase">Pagamento</h2>
+        <fieldset className="grid gap-3 border border-line bg-white p-6">
+          <legend className="font-display text-2xl font-bold uppercase">Forma de pagamento</legend>
           <label className="flex items-center gap-3 text-sm font-medium">
-            <input type="radio" checked={method === "pix"} onChange={() => setMethod("pix")} />
+            <input
+              type="radio"
+              name="payment_method"
+              value="pix"
+              checked={method === "pix"}
+              onChange={() => setMethod("pix")}
+              aria-describedby="pix-help"
+            />
             Pix
           </label>
-          <p className="pl-6 text-xs text-muted">QR Code gerado após criar o pedido.</p>
+          <p id="pix-help" className="pl-6 text-xs text-muted">
+            QR Code gerado após criar o pedido.
+          </p>
           <label className="flex items-center gap-3 text-sm font-medium">
-            <input type="radio" checked={method === "card"} onChange={() => setMethod("card")} />
+            <input
+              type="radio"
+              name="payment_method"
+              value="card"
+              checked={method === "card"}
+              onChange={() => setMethod("card")}
+              aria-describedby="card-help"
+            />
             Cartão de crédito
           </label>
-          <p className="pl-6 text-xs text-muted">Você é direcionado ao checkout seguro do Mercado Pago.</p>
-        </section>
+          <p id="card-help" className="pl-6 text-xs text-muted">
+            Você é direcionado ao checkout seguro do Mercado Pago.
+          </p>
+        </fieldset>
 
         {state.message ? (
-          <p className="border border-red-500 bg-white p-3 text-sm text-red-700">{state.message}</p>
+          <p role="alert" className="border border-red-500 bg-white p-3 text-sm text-red-700">
+            {state.message}
+          </p>
         ) : null}
       </div>
 

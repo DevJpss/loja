@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "incremental": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": ".test-dist",
+    "rootDir": ".",
+    "paths": {}
+  },
+  "include": [
+    "src/lib/format.ts",
+    "src/lib/jsonld.ts",
+    "src/lib/orders.ts",
+    "src/lib/reports.ts",
+    "src/lib/site.ts",
+    "tests/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

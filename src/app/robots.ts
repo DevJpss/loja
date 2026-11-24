@@ -1,10 +1,15 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: "*", allow: "/", disallow: ["/admin"] },
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/admin", "/checkout", "/carrinho", "/pedido/"],
+      },
     ],
-    sitemap: `${(process.env.NEXT_PUBLIC_SITE_URL ?? "https://evidence-reps-lojha.vercel.app").replace(/\/$/, "")}/sitemap.xml`,
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

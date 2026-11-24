@@ -13,6 +13,7 @@ export const instant = false;
 export const metadata: Metadata = {
   title: "Pedido",
   description: "Acompanhe o status do seu pedido Evidence Reps.",
+  robots: { index: false, follow: false },
 };
 
 type Props = { params: Promise<{ code: string }> };

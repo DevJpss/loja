@@ -1,3 +1,5 @@
+import { SITE_URL } from "./site";
+
 export type PaymentMethod = "pix" | "card" | null;
 
 type SettingRow = { key: string; value: unknown };
@@ -65,7 +67,7 @@ type NotificationInput = {
 };
 
 export function buildCustomerNotification(input: NotificationInput) {
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://evidence-reps-lojha.vercel.app").replace(/\/$/, "");
+  const siteUrl = SITE_URL;
   const tracking = input.trackingCode?.trim();
   const shipped = input.status === "shipped" || input.status === "delivered";
   const subject = shipped

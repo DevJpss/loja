@@ -28,13 +28,14 @@ export default async function AdminProductsPage() {
       {products.length ? (
         <div className="overflow-x-auto border border-line bg-white">
           <table className="w-full min-w-[720px] text-left text-sm">
+            <caption className="sr-only">Produtos cadastrados no catálogo.</caption>
             <thead className="bg-panel text-xs uppercase tracking-wider text-muted">
               <tr>
-                <th className="p-3">Produto</th>
-                <th className="p-3">Categoria</th>
-                <th className="p-3">Preço</th>
-                <th className="p-3">Status</th>
-                <th className="p-3 text-right">Ações</th>
+                <th scope="col" className="p-3">Produto</th>
+                <th scope="col" className="p-3">Categoria</th>
+                <th scope="col" className="p-3">Preço</th>
+                <th scope="col" className="p-3">Status</th>
+                <th scope="col" className="p-3 text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">

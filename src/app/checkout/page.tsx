@@ -4,6 +4,7 @@ import CheckoutForm from "@/components/CheckoutForm";
 export const metadata: Metadata = {
   title: "Checkout",
   description: "Finalize seu pedido na Evidence Reps.",
+  robots: { index: false, follow: false },
 };
 
 export default function CheckoutPage() {

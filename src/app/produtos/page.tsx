@@ -1,14 +1,27 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import CatalogGrid from "@/components/CatalogGrid";
-import { getProducts } from "@/lib/catalog";
+import { getCategories, getProducts } from "@/lib/catalog";
+import { SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Produtos",
-  description: "Catálogo de acessórios de treino Evidence Reps.",
+  title: "Catálogo de acessórios de treino",
+  description:
+    "Caneleiras, anilhas de microloading, bands, straps e acessórios de treino no catálogo da Evidence Reps. Filtre por categoria e compre com Pix ou cartão.",
+  alternates: { canonical: "/produtos" },
+  openGraph: {
+    title: `Catálogo | ${SITE_NAME}`,
+    description: "Acessórios de treino escolhidos pela função, não pelo hype.",
+    url: "/produtos",
+    type: "website",
+  },
 };
 
 export default async function ProductsPage() {
-  const products = await getProducts();
+  const [products, categories] = await Promise.all([
+    getProducts(),
+    getCategories(),
+  ]);
 
   return (
     <main className="px-4 py-12 sm:px-8 lg:px-16">
@@ -19,11 +32,19 @@ export default async function ProductsPage() {
         Produtos
       </h1>
       <p className="mb-10 max-w-2xl text-muted">
-        Filtre por categoria ou busque pelo nome. Adicione itens ao carrinho e
-        finalize com Pix ou cartão. Seus dados de pagamento ficam no gateway;
-        recebemos apenas as informações de entrega.
+        Filtre por categoria ou busque pelo nome. Cada item é escolhido pela função
+        que cumpre no treino — nada de suplementos ou promessas milagrosas. O
+        pagamento é processado pelo gateway: recebemos apenas os dados de entrega.
       </p>
-      <CatalogGrid products={products} />
+      <Suspense
+        fallback={
+          <p className="border border-line bg-panel p-8 text-center text-muted">
+            Carregando catálogo...
+          </p>
+        }
+      >
+        <CatalogGrid products={products} categories={categories} />
+      </Suspense>
     </main>
   );
 }
