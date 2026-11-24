@@ -132,6 +132,26 @@ em `settings` (valores padrão se as chaves não existirem):
 | `gateway_fee_fixed_cents` | `30` | Valor fixo por transação, em centavos |
 | `whatsapp_number` | `""` | Número usado nos links `wa.me` (com DDI) |
 
+### Frete por região
+
+O frete cobrado no checkout é calculado pela UF do endereço (`src/lib/shipping.ts`),
+com base em medições feitas em 24/11/2026 no checkout logado da Shopee para o
+anúncio da polia baixa enviado de Salvador/BA:
+
+| Região | Estados | Frete cobrado | Frete medido na Shopee |
+|---|---|---|---|
+| Sudeste | SP, RJ, MG, ES | R$ 9,90 | R$ 8,39–9,62 |
+| Sul | PR, SC, RS | R$ 10,90 | R$ 10,29 |
+| Centro-Oeste | GO, DF, MS, MT | R$ 13,90 | R$ 10,83–13,25 |
+| Nordeste | BA, SE, AL, PE, PB, RN, CE, PI, MA | R$ 15,90 | R$ 12,04–15,69 |
+| Norte | AC, RO, AM, PA, TO | R$ 24,90 | R$ 22,65 |
+| Norte (RR e AP) | RR, AP | R$ 39,90 | R$ 33,59–39,66 |
+
+Cobramos o maior valor medido de cada região, arredondado para cima, para não
+absorver a diferença na compra do fornecedor. A regra de frete grátis
+(`free_shipping_threshold_cents`, padrão R$ 299,00) continua valendo. A chave
+antiga `flat_shipping_cents` não é mais usada.
+
 As notificações são links gerados no painel (`mailto:` e `wa.me`), sem serviço
 pago. O cliente vê o status e o rastreio em `/pedido/[code]`.
 
@@ -165,8 +185,8 @@ editar ou excluir produtos. Páginas protegidas usam `instant = false` e
 - RLS habilitado: catálogo legível por todos; tabelas de clientes/pedidos sem
   acesso público.
 - Webhook valida assinatura HMAC e usa `webhook_events` para idempotência.
-- Preços e regras de frete são recalculados no servidor; o navegador envia só
-  IDs e quantidades.
+- Preços e frete por UF são recalculados no servidor; o navegador envia só
+  IDs, quantidades e o endereço (a tabela de frete não é confiada ao cliente).
 - Dados de cartão/Pix nunca são armazenados — ficam no gateway.
 
 ## Validação

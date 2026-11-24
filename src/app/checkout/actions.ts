@@ -9,6 +9,7 @@ import {
   isLivePayments,
 } from "@/lib/payments/mercadopago";
 import type { ActionState } from "@/lib/types";
+import { shippingCentsForState } from "@/lib/shipping";
 
 const checkoutSchema = z.object({
   full_name: z.string().trim().min(3, "Informe seu nome completo"),
@@ -76,7 +77,13 @@ export async function checkout(
     (settingsData ?? []).map((row) => [row.key, Number(row.value)]),
   );
   const threshold = settings.get("free_shipping_threshold_cents") ?? 29900;
-  const flatShipping = settings.get("flat_shipping_cents") ?? 1990;
+  const regionalShipping = shippingCentsForState(parsed.data.state);
+  if (regionalShipping === null) {
+    return {
+      ok: false,
+      message: "UF inválida. Informe a sigla do estado para calcular o frete.",
+    };
+  }
 
   const ids = Array.from(new Set(cart.map((item) => item.product_id)));
   const { data: products, error: productsError } = await admin
@@ -123,7 +130,7 @@ export async function checkout(
   }
 
   const subtotal = lines.reduce((sum, line) => sum + line.price_cents * line.qty, 0);
-  const shipping = subtotal >= threshold ? 0 : flatShipping;
+  const shipping = subtotal >= threshold ? 0 : regionalShipping;
   const total = subtotal + shipping;
 
   const code = `ER-${Date.now().toString(36).toUpperCase()}-${crypto.randomUUID().slice(0, 6).toUpperCase()}`;

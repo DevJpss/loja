@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import Link from "next/link";
 import { useCart } from "./CartProvider";
 import { formatPrice } from "@/lib/format";
+import { SHIPPING_REGIONS, shippingRegionForState } from "@/lib/shipping";
 import { checkout } from "@/app/checkout/actions";
 import type { ActionState } from "@/lib/types";
 
@@ -32,6 +33,7 @@ export default function CheckoutForm() {
     state: "",
   });
   const [method, setMethod] = useState<"pix" | "card">("pix");
+  const shippingRegion = shippingRegionForState(address.state);
 
   async function lookupCep() {
     const digits = cep.replace(/\D/g, "");
@@ -187,7 +189,36 @@ export default function CheckoutForm() {
           <span>Subtotal</span>
           <span>{formatPrice(subtotal_cents)}</span>
         </div>
-        <p className="mt-2 text-xs text-muted">Frete calculado ao criar o pedido.</p>
+        <div className="mt-2 flex justify-between text-sm">
+          <span>Frete{shippingRegion ? ` (${shippingRegion.label})` : ""}</span>
+          <span>{shippingRegion ? formatPrice(shippingRegion.priceCents) : "Informe o CEP"}</span>
+        </div>
+        <details className="mt-4 border-t border-line pt-3 text-xs text-muted">
+          <summary className="cursor-pointer font-semibold text-ink">
+            Tabela de frete por região
+          </summary>
+          <table className="mt-3 w-full text-left">
+            <thead>
+              <tr className="border-b border-line">
+                <th scope="col" className="pb-1 font-semibold">Região</th>
+                <th scope="col" className="pb-1 font-semibold">Estados</th>
+                <th scope="col" className="pb-1 text-right font-semibold">Frete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SHIPPING_REGIONS.map((region) => (
+                <tr key={region.label} className="border-b border-line last:border-0">
+                  <td className="py-1.5">{region.label}</td>
+                  <td className="py-1.5">{region.states.join(", ")}</td>
+                  <td className="py-1.5 text-right">{formatPrice(region.priceCents)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="mt-2">
+            Pedidos acima de R$ 299,00 têm frete grátis. Valores confirmados ao criar o pedido.
+          </p>
+        </details>
         <button
           type="submit"
           disabled={pending || items.length === 0}
