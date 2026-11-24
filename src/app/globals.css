@@ -127,27 +127,26 @@ details[open] .faq-answer {
   transform: translateY(1px) scale(0.99);
 }
 
-/* Reveal durante o scroll: o HTML já nasce visível (data-visible="true") e só
-   o client component alterna o atributo quando IntersectionObserver existe. */
+/* Movimento ligado ao scroll: o HTML já nasce neutro e visível; o client
+   component escreve --er-scroll (-1..1) e --er-distance (0..1) a cada frame,
+   com amortecimento para dar sensação de inércia. */
 [data-scroll-reveal] {
-  transition:
-    opacity 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 420ms ease;
-}
+  --er-scroll: 0;
+  --er-distance: 0;
+  --er-shift: 48px;
+  --er-scale: 0.045;
+  --er-rotate: 1deg;
+  --er-blur: 3px;
+  --er-fade: 0.9;
 
-[data-scroll-reveal][data-visible="true"] {
-  opacity: 1;
-  transform: none;
-  filter: none;
-  transition-delay: var(--er-reveal-delay, 0ms);
-}
-
-[data-scroll-reveal][data-visible="false"] {
-  opacity: 0;
-  transform: translateY(14px) scale(0.99);
-  filter: blur(2px);
-  transition-delay: 0ms;
+  opacity: calc(1 - var(--er-distance) * var(--er-fade));
+  transform:
+    translate3d(0, calc(var(--er-scroll) * var(--er-shift)), 0)
+    scale(calc(1 - var(--er-distance) * var(--er-scale)))
+    rotate(calc(var(--er-scroll) * var(--er-rotate)));
+  filter: blur(calc(var(--er-distance) * var(--er-blur)));
+  transform-origin: center;
+  will-change: opacity, transform, filter;
 }
 
 /* O fade de entrada dos cards passa a ser feito pelo wrapper de scroll. */
@@ -225,6 +224,12 @@ details[open] .faq-answer {
     transition-duration: 0.01ms !important;
     transition-delay: 0ms !important;
     scroll-behavior: auto !important;
+  }
+
+  [data-scroll-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
 
   ::view-transition-old(*),

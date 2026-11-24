@@ -29,7 +29,7 @@ export default async function ProductsPage() {
 
   return (
     <main className="px-4 py-12 sm:px-8 lg:px-16">
-      <ScrollReveal>
+      <ScrollReveal depth={1.05}>
         <Breadcrumbs items={[{ label: "Início", href: "/" }, { label: "Produtos" }]} />
         <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
           Catálogo
@@ -43,7 +43,7 @@ export default async function ProductsPage() {
           pelo gateway: recebemos apenas os dados de entrega.
         </p>
       </ScrollReveal>
-      <ScrollReveal delay={70}>
+      <ScrollReveal depth={0.55} delay={70}>
         <Suspense
           fallback={
             <p className="border border-line bg-panel p-8 text-center text-muted">

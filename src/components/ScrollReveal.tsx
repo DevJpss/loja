@@ -1,72 +1,128 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
   className?: string;
-  /** Atraso apenas na entrada, para um efeito escalonado suave. */
+  /** Intensidade do deslocamento/fade. 1 = padrão; 0,6 = mais sutil. */
+  depth?: number;
+  /** Atraso do amortecimento, em ms: quanto maior, mais o elemento "arrasta". */
   delay?: number;
 };
 
-export default function ScrollReveal({ children, className = "", delay = 0 }: Props) {
+const clamp = (value: number) => Math.min(1, Math.max(-1, value));
+
+export default function ScrollReveal({
+  children,
+  className = "",
+  depth = 1,
+  delay = 0,
+}: Props) {
   const ref = useRef<HTMLDivElement>(null);
-  // O HTML renderizado no servidor já vem visível. Sem JavaScript — ou com
-  // prefers-reduced-motion — nada fica escondido.
-  const [visible, setVisible] = useState(true);
+  const strength = Math.max(0.4, Math.min(1.4, depth));
+  const ease = Math.max(0.06, 0.16 - delay / 2000);
 
   useEffect(() => {
     const current = ref.current;
-    if (!current || typeof IntersectionObserver === "undefined") return;
-    const target: HTMLDivElement = current;
+    if (!current) return;
+    const node: HTMLDivElement = current;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let observer: IntersectionObserver | undefined;
+    let frame = 0;
+    let running = false;
+    let initialized = false;
+    let position = 0;
+    let distance = 0;
+    let targetPosition = 0;
+    let targetDistance = 0;
 
-    function disconnect() {
-      observer?.disconnect();
-      observer = undefined;
+    function write() {
+      node.style.setProperty("--er-scroll", position.toFixed(4));
+      node.style.setProperty("--er-distance", distance.toFixed(4));
     }
 
-    function enable() {
-      if (motion.matches || observer) return;
-      const rect = target.getBoundingClientRect();
-      setVisible(rect.bottom > 0 && rect.top < window.innerHeight * 0.92);
-      observer = new IntersectionObserver(
-        ([entry]) => setVisible(entry.isIntersecting),
-        { rootMargin: "0px 0px -8% 0px", threshold: 0 },
-      );
-      observer.observe(target);
+    function measure() {
+      const rect = node.getBoundingClientRect();
+      const viewport = window.innerHeight || 1;
+      const center = rect.top + rect.height / 2;
+      const range = viewport / 2 + rect.height / 2;
+      const raw = range > 0 ? (center - viewport / 2) / range : 0;
+      targetPosition = clamp(raw);
+      targetDistance = Math.abs(targetPosition);
+    }
+
+    function tick() {
+      position += (targetPosition - position) * ease;
+      distance += (targetDistance - distance) * ease;
+
+      if (Math.abs(targetPosition - position) < 0.0005) position = targetPosition;
+      if (Math.abs(targetDistance - distance) < 0.0005) distance = targetDistance;
+
+      write();
+
+      if (position !== targetPosition || distance !== targetDistance) {
+        frame = requestAnimationFrame(tick);
+      } else {
+        running = false;
+      }
+    }
+
+    function schedule() {
+      measure();
+      if (!initialized) {
+        position = targetPosition;
+        distance = targetDistance;
+        initialized = true;
+        write();
+        return;
+      }
+      if (!running) {
+        running = true;
+        frame = requestAnimationFrame(tick);
+      }
+    }
+
+    function reset() {
+      cancelAnimationFrame(frame);
+      running = false;
+      initialized = false;
+      position = 0;
+      distance = 0;
+      node.style.removeProperty("--er-scroll");
+      node.style.removeProperty("--er-distance");
     }
 
     function onMotionChange() {
-      if (motion.matches) {
-        disconnect();
-        setVisible(true);
-        return;
-      }
-      enable();
+      if (reduced.matches) reset();
+      else schedule();
     }
 
-    enable();
-    if (motion.addEventListener) motion.addEventListener("change", onMotionChange);
-    else motion.addListener(onMotionChange);
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    if (reduced.addEventListener) reduced.addEventListener("change", onMotionChange);
+    else reduced.addListener(onMotionChange);
 
     return () => {
-      disconnect();
-      if (motion.removeEventListener) motion.removeEventListener("change", onMotionChange);
-      else motion.removeListener(onMotionChange);
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (reduced.removeEventListener) reduced.removeEventListener("change", onMotionChange);
+      else reduced.removeListener(onMotionChange);
     };
-  }, []);
+  }, [ease]);
+
+  const style = {
+    "--er-shift": `${Math.round(48 * strength)}px`,
+    "--er-scale": (0.045 * strength).toString(),
+    "--er-rotate": `${(1 * strength).toFixed(2)}deg`,
+    "--er-blur": `${(3 * strength).toFixed(1)}px`,
+    "--er-fade": Math.min(0.95, 0.9 * strength).toString(),
+  } as CSSProperties;
 
   return (
-    <div
-      ref={ref}
-      data-scroll-reveal
-      data-visible={visible}
-      className={className}
-      style={delay ? ({ "--er-reveal-delay": `${delay}ms` } as CSSProperties) : undefined}
-    >
+    <div ref={ref} data-scroll-reveal className={className} style={style}>
       {children}
     </div>
   );

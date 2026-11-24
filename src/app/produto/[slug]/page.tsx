@@ -118,7 +118,7 @@ async function ProductDetails({ params }: Props) {
   return (
     <>
       <Breadcrumbs items={crumbs} />
-      <ScrollReveal>
+      <ScrollReveal depth={0.75}>
         <div className="grid gap-10 lg:grid-cols-2">
           <script
             type="application/ld+json"
@@ -194,7 +194,7 @@ async function ProductDetails({ params }: Props) {
       </ScrollReveal>
 
       {reviews.stats.count ? (
-        <ScrollReveal>
+        <ScrollReveal depth={0.9}>
           <section className="mt-14 border-t border-line pt-10">
             <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
               Avaliações verificadas
@@ -262,7 +262,7 @@ export default function ProductPage(props: Props) {
         <ProductDetails {...props} />
       </Suspense>
 
-      <ScrollReveal>
+      <ScrollReveal depth={1}>
         <section className="mt-14 border-t border-line pt-10">
           <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
             Como funciona

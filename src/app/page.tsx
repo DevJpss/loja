@@ -39,7 +39,7 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: jsonLdHtml(itemList) }}
       />
       <section className="flex flex-wrap gap-10 px-4 py-14 sm:px-8 lg:px-16 lg:py-24">
-        <ScrollReveal className="flex flex-1 flex-col justify-center gap-7 lg:basis-[52%]">
+        <ScrollReveal className="flex flex-1 flex-col justify-center gap-7 lg:basis-[52%]" depth={1.15}>
           <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
             Acessórios para treino
           </span>
@@ -70,7 +70,7 @@ export default async function Home() {
             </Link>
           </div>
         </ScrollReveal>
-        <ScrollReveal className="flex flex-1 flex-col lg:basis-[42%]" delay={90}>
+        <ScrollReveal className="flex flex-1 flex-col lg:basis-[42%]" depth={0.85} delay={90}>
           <Link
             href="/produto/polia-baixa-tornozeleira-cross-over"
             className="relative flex min-h-[360px] flex-1 items-end overflow-hidden bg-line/40 p-5"
@@ -106,7 +106,7 @@ export default async function Home() {
       </section>
 
       <section id="categorias" className="px-4 py-12 sm:px-8 lg:px-16">
-        <ScrollReveal>
+        <ScrollReveal depth={1}>
           <h2 className="mb-2 font-display text-5xl font-bold uppercase">Categorias</h2>
           <p className="mb-6 max-w-2xl text-muted">
             Cada linha resolve uma necessidade do treino. Escolha o que combina com a
@@ -138,7 +138,7 @@ export default async function Home() {
       </section>
 
       <section className="px-4 py-12 sm:px-8 lg:px-16">
-        <ScrollReveal>
+        <ScrollReveal depth={0.75}>
           <div className="mb-6 flex items-end justify-between gap-4">
             <div>
               <h2 className="font-display text-5xl font-bold uppercase">Destaques</h2>
@@ -159,7 +159,7 @@ export default async function Home() {
       </section>
 
       <section id="sobre" className="border-t border-line px-4 py-14 sm:px-8 lg:px-16">
-        <ScrollReveal>
+        <ScrollReveal depth={1}>
           <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
             Sobre a loja
           </span>

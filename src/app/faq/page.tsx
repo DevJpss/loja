@@ -72,7 +72,7 @@ export default function FaqPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
       />
-      <ScrollReveal>
+      <ScrollReveal depth={0.85}>
         <Breadcrumbs items={[{ label: "Início", href: "/" }, { label: "Perguntas frequentes" }]} />
         <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
           Ajuda
