@@ -65,7 +65,7 @@ type NotificationInput = {
 };
 
 export function buildCustomerNotification(input: NotificationInput) {
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://lojascec.vercel.app").replace(/\/$/, "");
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://evidence-reps.vercel.app").replace(/\/$/, "");
   const tracking = input.trackingCode?.trim();
   const shipped = input.status === "shipped" || input.status === "delivered";
   const subject = shipped

@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getProducts } from "@/lib/catalog";
 
-const base = "https://evidencereps.com.br";
+const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://evidence-reps.vercel.app").replace(/\/$/, "");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await getProducts();

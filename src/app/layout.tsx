@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   description:
     "Acessórios de treino baseados em evidências: caneleiras, anilhas de microloading, bands, straps e mais.",
-  metadataBase: new URL("https://evidencereps.com.br"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://evidence-reps.vercel.app"),
   openGraph: {
     title: "Evidence Reps",
     description: "Every rep backed by evidence.",

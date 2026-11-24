@@ -5,6 +5,6 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       { userAgent: "*", allow: "/", disallow: ["/admin"] },
     ],
-    sitemap: "https://evidencereps.com.br/sitemap.xml",
+    sitemap: `${(process.env.NEXT_PUBLIC_SITE_URL ?? "https://evidence-reps.vercel.app").replace(/\/$/, "")}/sitemap.xml`,
   };
 }

@@ -89,12 +89,17 @@ Nenhuma cobrança é feita no modo demo.
 
 ### Produção (24/11/2026)
 
-- URL em uso: `https://lojascec.vercel.app` (domínio `www.evidencereps.com.br`
-  aguardando configuração de DNS).
-- Webhook: `https://lojascec.vercel.app/api/webhooks/pagamento`, evento `payment`,
-  assinatura HMAC validada (401 sem assinatura, 200 com assinatura correta).
-- Pix e preferência de cartão criados com sucesso pela API real; pedido de teste
-  cancelado e removido do banco após a validação.
+- URL alvo: `https://evidence-reps.vercel.app`. O projeto Vercel ainda se chama
+  `lojascec`; a troca é feita em **Vercel → Settings → General → Project Name**.
+  Até lá, `https://lojascec.vercel.app` continua respondendo.
+- Domínio próprio `www.evidencereps.com.br` segue adiado por custo; quando for
+  registrado, basta apontá-lo para o mesmo projeto.
+- Webhook alvo: `https://evidence-reps.vercel.app/api/webhooks/pagamento`, evento
+  `payment`, assinatura HMAC validada (401 sem assinatura, 200 com assinatura correta).
+  Enquanto o rename não é feito, o webhook ativo é o de `lojascec.vercel.app`.
+- Pix e preferência de cartão criados com sucesso pela API real. Teste real de
+  R$ 1,00 conduzido com pedido temporário, confirmação por webhook, estorno e
+  limpeza dos dados temporários.
 
 ## Fila de pedidos (Fase 4)
 
