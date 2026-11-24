@@ -226,9 +226,10 @@ pago. O cliente vê o status e o rastreio em `/pedido/[code]`.
 ## Cache
 
 `getProducts()`, `getProductBySlug()` e `getCategories()` usam `use cache` com
-`cacheLife` e `cacheTag`. O painel chama `updateTag("products")` após criar,
-editar ou excluir produtos. Páginas protegidas usam `instant = false` e
-`connection()` para evitar prerender com dados de usuário.
+`cacheLife` e `cacheTag`. `getApprovedReviews()` usa a tag `reviews`. O painel
+chama `updateTag("products")` após criar, editar ou excluir produtos e
+`updateTag("reviews")` ao aprovar/rejeitar avaliações. Páginas protegidas usam
+`instant = false` e `connection()` para evitar prerender com dados de usuário.
 
 ## Segurança
 
@@ -253,6 +254,23 @@ editar ou excluir produtos. Páginas protegidas usam `instant = false` e
 - CI em `.github/workflows/ci.yml` roda lint, `next typegen` + `tsc`, testes e
   build em cada push ou PR para `main`.
 
+## Confiança e conversão (onda 2)
+
+- `/faq` responde dúvidas de pagamento, frete, rastreio e compatibilidade, com
+  `FAQPage` em JSON-LD. Breadcrumbs acessíveis com `BreadcrumbList` aparecem no
+  catálogo, no PDP e no FAQ.
+- O PDP destaca o campo `Compatibilidade` da ficha técnica e, quando há
+  avaliações aprovadas, exibe média, distribuição e `aggregateRating` no JSON-LD.
+- Avaliações verificadas: só quem tem item de um pedido `delivered` pode avaliar,
+  identificado pelo código do pedido (sem login). O envio começa `pending` e só
+  aparece no PDP após aprovação em `/admin/avaliacoes`.
+- A vitrine pública mostra nome e inicial do sobrenome, sem e-mail, telefone ou
+  endereço. A tabela `reviews` tem RLS e não tem policies públicas: todo acesso
+  é feito no servidor com `service_role`.
+- `supabase/migrations/0002_reviews.sql` precisa ser executada no SQL Editor do
+  Supabase antes de usar avaliações. Até lá, as consultas retornam lista vazia e
+  o envio falha com mensagem genérica.
+
 ## Validação
 
 ```bash
@@ -266,9 +284,9 @@ npm run build
 `npm test` compila os helpers/testes para `.test-dist/` (ignorado pelo Git e pelo
 ESLint) e roda a suíte `node:test` sem dependências extras: pedidos/taxas, filtros
 e CSV do painel, URL canônica, URLs de parceiro, escape de JSON-LD, máscara de
-PII, assinatura HMAC do webhook e schemas de produto/notificação.
+PII, assinatura HMAC do webhook, schemas de produto/notificação e avaliações.
 
-Build de referência: 44 páginas, com `/api/webhooks/pagamento`, `/api/health` e
+Build de referência: 46 páginas, com `/api/webhooks/pagamento`, `/api/health` e
 `/api/cron/supplier-check` como rotas dinâmicas. O build também passa sem
 `.env.local` (como na CI): páginas protegidas que leem o banco marcam
 renderização por requisição com `connection()` em vez de prerenderizar.
@@ -277,8 +295,9 @@ renderização por requisição com `connection()` em vez de prerenderizar.
 
 Fora de escopo: domínio próprio e Fase 0 (CNPJ/contador/notas/páginas legais).
 
-- Onda 2 — confiança e conversão: FAQ, contato/trocas, breadcrumbs, `lastmod` no
-  sitemap, compatibilidade no PDP e avaliações verificadas.
+- Onda 2 — confiança e conversão: FAQ, breadcrumbs, `lastmod` no sitemap,
+  compatibilidade no PDP e avaliações verificadas implementados. Contato/trocas
+  ficaram adiados (o banco não tem WhatsApp/e-mail de contato cadastrados).
 - Onda 3 — operação: backups, Sentry, e-mails transacionais, rate limiting e
   migração para `sb_publishable_`/`sb_secret_` (dependem de orçamento).
 - Onda 4 — crescimento: analytics com consentimento, UTM, cupom, recuperação de

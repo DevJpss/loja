@@ -16,6 +16,7 @@
     "src/lib/payments/mercadopago.ts",
     "src/lib/privacy.ts",
     "src/lib/reports.ts",
+    "src/lib/review-helpers.ts",
     "src/lib/site.ts",
     "src/lib/supplier-pricing.ts",
     "src/lib/validation.ts",

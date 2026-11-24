@@ -4,8 +4,11 @@ import { connection } from "next/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import ClearCart from "@/components/ClearCart";
+import ReviewForm from "@/components/ReviewForm";
 import { formatPrice } from "@/lib/format";
 import { maskCityState, maskEmail, maskFullName, maskPhone } from "@/lib/privacy";
+import { reviewStatusLabel } from "@/lib/review-helpers";
+import { getOrderReviewStatuses } from "@/lib/reviews";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { simulatePayment } from "./actions";
 
@@ -46,7 +49,7 @@ async function OrderDetails({ params }: Props) {
   const { data: order } = await admin
     .from("orders")
     .select(
-      "id,code,status,subtotal_cents,shipping_cents,total_cents,created_at,paid_at,payment_provider,tracking_code,customers(full_name,email,phone,address),order_items(id,name_snapshot,image_snapshot,price_cents,qty),payments(id,provider,status,payload)",
+      "id,code,status,subtotal_cents,shipping_cents,total_cents,created_at,paid_at,payment_provider,tracking_code,customers(full_name,email,phone,address),order_items(id,product_id,name_snapshot,image_snapshot,price_cents,qty),payments(id,provider,status,payload)",
     )
     .eq("code", code)
     .maybeSingle();
@@ -59,6 +62,15 @@ async function OrderDetails({ params }: Props) {
   const address = (customer?.address ?? {}) as Record<string, string>;
   const paid = order.status !== "pending_payment";
   const demo = order.payment_provider === "demo";
+
+  const reviewableItems = (order.order_items ?? []).filter((item) => item.product_id);
+  const reviewStatuses =
+    order.status === "delivered"
+      ? await getOrderReviewStatuses(
+          order.id,
+          reviewableItems.map((item) => item.product_id!).filter(Boolean),
+        )
+      : {};
 
   return (
     <>
@@ -193,6 +205,43 @@ async function OrderDetails({ params }: Props) {
           </div>
         </section>
       </div>
+
+      {order.status === "delivered" && reviewableItems.length ? (
+        <section className="mt-10 border-t border-line pt-8">
+          <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+            Avaliações
+          </span>
+          <h2 className="mt-2 font-display text-3xl font-bold uppercase">
+            Avalie seus produtos
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-muted">
+            Sua avaliação ajuda quem está escolhendo. Ela só aparece na loja depois de aprovada —
+            e nunca mostra seu e-mail, telefone ou endereço.
+          </p>
+          <div className="mt-5 grid gap-5 md:grid-cols-2">
+            {reviewableItems.map((item) => {
+              const status = reviewStatuses[item.product_id!];
+              if (status) {
+                return (
+                  <div key={item.id} className="border border-line bg-panel p-4 text-sm">
+                    <p className="font-semibold">{item.name_snapshot}</p>
+                    <p className="mt-2 text-muted">{reviewStatusLabel(status)}</p>
+                  </div>
+                );
+              }
+              return (
+                <ReviewForm
+                  key={item.id}
+                  code={order.code}
+                  orderItemId={item.id}
+                  productName={item.name_snapshot}
+                  defaultName={maskFullName(customer?.full_name)}
+                />
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
 
       <Link href="/produtos" className="mt-8 inline-block text-sm font-semibold text-accent">
         Continuar comprando →

@@ -23,6 +23,23 @@ export const productSchema = z.object({
 
 export type ParsedProduct = z.infer<typeof productSchema>;
 
+/** Avaliação enviada pelo cliente; o rating vem como string do FormData. */
+export const reviewSchema = z.object({
+  author_name: z.string().trim().min(2, "Informe seu nome").max(80),
+  rating: z.coerce
+    .number()
+    .int()
+    .min(1, "Escolha de 1 a 5 estrelas")
+    .max(5, "Escolha de 1 a 5 estrelas"),
+  body: z
+    .string()
+    .trim()
+    .min(10, "Escreva pelo menos 10 caracteres")
+    .max(1000, "Use até 1000 caracteres"),
+});
+
+export type ParsedReview = z.infer<typeof reviewSchema>;
+
 /** Payload mínimo das notificações de pagamento; campos extras são ignorados. */
 export const paymentWebhookSchema = z.object({
   type: z.string().optional(),

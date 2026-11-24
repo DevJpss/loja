@@ -7,8 +7,10 @@ import AddToCartButton from "@/components/AddToCartButton";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ProductGallery from "@/components/ProductGallery";
 import { getProductBySlug, getProducts } from "@/lib/catalog";
+import { reviewStars } from "@/lib/review-helpers";
 import { publicProduct } from "@/lib/public-product";
 import { getProductGallery } from "@/lib/product-gallery";
+import { getApprovedReviews } from "@/lib/reviews";
 import { SITE_NAME, absoluteUrl } from "@/lib/site";
 
 type Props = PageProps<"/produto/[slug]">;
@@ -66,6 +68,7 @@ async function ProductDetails({ params }: Props) {
   if (!product) notFound();
 
   const gallery = getProductGallery(product);
+  const reviews = await getApprovedReviews(product.id);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -84,6 +87,17 @@ async function ProductDetails({ params }: Props) {
           ? "https://schema.org/OutOfStock"
           : "https://schema.org/InStock",
     },
+    ...(reviews.stats.count > 0 && reviews.stats.average !== null
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: reviews.stats.average.toFixed(1),
+            reviewCount: reviews.stats.count,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
   };
 
   const crumbs = [
@@ -175,6 +189,42 @@ async function ProductDetails({ params }: Props) {
         </p>
       </div>
       </div>
+
+      {reviews.stats.count ? (
+        <section className="mt-14 border-t border-line pt-10">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
+            Avaliações verificadas
+          </span>
+          <h2 className="mt-2 font-display text-4xl font-bold uppercase sm:text-5xl">
+            Quem já treinou com este item
+          </h2>
+          <div className="mt-4 flex flex-wrap items-baseline gap-3">
+            <span className="text-4xl font-semibold">
+              {reviews.stats.average?.toFixed(1).replace(".", ",")}
+            </span>
+            <span aria-hidden="true" className="text-xl text-accent">
+              {reviewStars(Math.round(reviews.stats.average ?? 0))}
+            </span>
+            <span className="text-sm text-muted">
+              {reviews.stats.count} avalia{reviews.stats.count === 1 ? "ção" : "ções"} aprovada
+              {reviews.stats.count === 1 ? "" : "s"}
+            </span>
+          </div>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {reviews.reviews.map((review) => (
+              <article key={review.id} className="border border-line bg-white p-5">
+                <p aria-label={`${review.rating} de 5 estrelas`} className="text-lg text-accent">
+                  {reviewStars(review.rating)}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed">{review.body}</p>
+                <p className="mt-4 text-xs text-muted">
+                  <strong className="text-ink">{review.author}</strong> · Compra verificada
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </>
   );
 }
