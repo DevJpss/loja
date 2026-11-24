@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatPrice } from "@/lib/format";
 import { jsonLdHtml } from "@/lib/jsonld";
 import AddToCartButton from "@/components/AddToCartButton";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import ProductGallery from "@/components/ProductGallery";
 import { getProductBySlug, getProducts } from "@/lib/catalog";
 import { publicProduct } from "@/lib/public-product";
@@ -86,8 +86,24 @@ async function ProductDetails({ params }: Props) {
     },
   };
 
+  const crumbs = [
+    { label: "Início", href: "/" },
+    { label: "Produtos", href: "/produtos" },
+    ...(product.categories?.slug
+      ? [
+          {
+            label: product.categories.name,
+            href: `/produtos?categoria=${encodeURIComponent(product.categories.slug)}`,
+          },
+        ]
+      : []),
+    { label: product.name },
+  ];
+
   return (
-    <div className="mt-6 grid gap-10 lg:grid-cols-2">
+    <>
+      <Breadcrumbs items={crumbs} />
+      <div className="grid gap-10 lg:grid-cols-2">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
@@ -126,6 +142,18 @@ async function ProductDetails({ params }: Props) {
 
         <AddToCartButton product={publicProduct(product)} variants={product.product_variants} />
 
+        {product.specs?.Compatibilidade ? (
+          <div className="border border-line bg-panel p-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-accent">
+              Compatibilidade
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed">{product.specs.Compatibilidade}</p>
+            <p className="mt-2 text-xs text-muted">
+              Confira as medidas da ficha técnica antes de comprar.
+            </p>
+          </div>
+        ) : null}
+
         {Object.entries(product.specs ?? {}).length ? (
           <div>
             <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider">Ficha técnica</h2>
@@ -146,7 +174,8 @@ async function ProductDetails({ params }: Props) {
           direto para você — seus dados de pagamento nunca são usados em lojas parceiras.
         </p>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 
@@ -168,9 +197,6 @@ const steps = [
 export default function ProductPage(props: Props) {
   return (
     <main className="px-4 py-12 sm:px-8 lg:px-16">
-      <Link href="/produtos" className="text-sm font-semibold text-accent">
-        ← Voltar para produtos
-      </Link>
       <Suspense
         fallback={
           <p className="mt-8 border border-line bg-panel p-8 text-center text-muted">

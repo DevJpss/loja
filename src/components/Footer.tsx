@@ -19,6 +19,7 @@ export default function Footer() {
           <div className="flex flex-col gap-1.5 text-line">
             <Link href="/produtos" className="hover:text-white">Produtos</Link>
             <Link href="/#categorias" className="hover:text-white">Categorias</Link>
+            <Link href="/faq" className="hover:text-white">Perguntas frequentes</Link>
             <Link href="/admin/login" className="hover:text-white">Admin</Link>
           </div>
         </div>

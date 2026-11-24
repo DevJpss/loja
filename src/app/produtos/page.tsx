@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import CatalogGrid from "@/components/CatalogGrid";
 import { getCategories, getProducts } from "@/lib/catalog";
 import { publicProduct } from "@/lib/public-product";
@@ -27,6 +28,7 @@ export default async function ProductsPage() {
 
   return (
     <main className="px-4 py-12 sm:px-8 lg:px-16">
+      <Breadcrumbs items={[{ label: "Início", href: "/" }, { label: "Produtos" }]} />
       <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
         Catálogo
       </span>

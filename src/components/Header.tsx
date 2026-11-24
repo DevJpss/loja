@@ -25,6 +25,9 @@ export default function Header() {
           <Link href="/#sobre" className="hover:text-accent">
             Sobre
           </Link>
+          <Link href="/faq" className="hover:text-accent">
+            FAQ
+          </Link>
           <Link
             href="/admin/login"
             className="rounded-sm bg-accent px-4 py-2.5 font-semibold text-white hover:opacity-90"
