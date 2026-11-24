@@ -168,10 +168,15 @@ editar ou excluir produtos. Páginas protegidas usam `instant = false` e
 ```bash
 npx tsc --noEmit
 npm run lint
+npm test
 npm run build
 ```
 
-Build de referência: 29 páginas, `/api/webhooks/pagamento` como rota dinâmica.
+`npm test` compila os helpers/testes para `.test-dist/` (ignorado pelo Git e pelo
+ESLint) e roda a suíte `node:test` sem dependências extras: pedidos/taxas, filtros
+e CSV do painel, URL canônica, URLs de parceiro e escape de JSON-LD.
+
+Build de referência: 31 páginas, `/api/webhooks/pagamento` como rota dinâmica.
 
 ## Próximas fases
 
