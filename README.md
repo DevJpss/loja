@@ -299,6 +299,15 @@ chama `updateTag("products")` após criar, editar ou excluir produtos e
   `--er-distance` (0 a 1) com amortecimento, produzindo parallax, fade, leve
   rotação/scale e blur conforme o elemento se afasta do centro da tela. Cada
   bloco tem uma intensidade (`depth`) e um arrasto (`delay`) diferentes.
+- A home é dividida em quatro áreas demarcadas por `SnapSections`: hero,
+  categorias, destaques e sobre. Em desktop sem `prefers-reduced-motion`, o
+  `scroll-snap-type: y mandatory` com `scroll-snap-stop: always` encaixa a
+  rolagem em uma área por vez; a atual fica nítida, a anterior recua e a
+  próxima aparece desfocada. O wrapper visual interno evita que esse transform
+  interfira na geometria do snap.
+- No modo snap a física interna dos blocos é desligada para a área ativa ficar
+  realmente nítida; nas outras páginas e no mobile o scroll livre com física
+  continua. `prefers-reduced-motion: reduce` desliga o snap e o movimento.
 - O HTML já vem neutro e visível (sem JS nada some). `prefers-reduced-motion:
   reduce` zera as variáveis e força `opacity/transform/filter` neutros.
 - `scroll-behavior: smooth` e `scroll-padding-top` mantêm âncoras e rolagem
